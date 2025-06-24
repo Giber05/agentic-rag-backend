@@ -1,0 +1,1219 @@
+{
+    "info": {
+        "_postman_id": "agentic-rag-ai-agent-api",
+        "name": "Agentic RAG AI Agent API",
+        "description": "Comprehensive API collection for the Agentic RAG AI Agent backend with 5 specialized agents working in coordination to provide contextual, accurate responses with source attribution.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "agentic-rag-ai-agent"
+    },
+    "item": [
+        {
+            "name": "Health & Status",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Basic health check endpoint for load balancers and monitoring"
+                    }
+                },
+                {
+                    "name": "API Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/status",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "status"
+                            ]
+                        },
+                        "description": "Detailed API status with configuration information"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Database",
+            "item": [
+                {
+                    "name": "Database Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/database/status",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "database",
+                                "status"
+                            ]
+                        },
+                        "description": "Check database connection and pgvector extension status"
+                    }
+                },
+                {
+                    "name": "Test Database Connection",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/database/test-connection",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "database",
+                                "test-connection"
+                            ]
+                        },
+                        "description": "Test database connectivity"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "OpenAI Integration",
+            "item": [
+                {
+                    "name": "Chat Completion",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello, how are you?\"\n    }\n  ],\n  \"model\": \"gpt-3.5-turbo\",\n  \"max_tokens\": 100,\n  \"temperature\": 0.7,\n  \"stream\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/chat/completions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "chat",
+                                "completions"
+                            ]
+                        },
+                        "description": "Create chat completion with GPT models"
+                    }
+                },
+                {
+                    "name": "Streaming Chat Completion",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me a story\"\n    }\n  ],\n  \"model\": \"gpt-3.5-turbo\",\n  \"stream\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/chat/completions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "chat",
+                                "completions"
+                            ]
+                        },
+                        "description": "Create streaming chat completion"
+                    }
+                },
+                {
+                    "name": "Text Embedding",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"input\": \"This is a test sentence for embedding\",\n  \"model\": \"text-embedding-ada-002\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/embeddings",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "embeddings"
+                            ]
+                        },
+                        "description": "Generate text embeddings"
+                    }
+                },
+                {
+                    "name": "Batch Embeddings",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"input\": [\n    \"First sentence to embed\",\n    \"Second sentence to embed\",\n    \"Third sentence to embed\"\n  ],\n  \"model\": \"text-embedding-ada-002\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/embeddings",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "embeddings"
+                            ]
+                        },
+                        "description": "Generate batch embeddings"
+                    }
+                },
+                {
+                    "name": "Usage Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/usage/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "usage",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get OpenAI usage statistics"
+                    }
+                },
+                {
+                    "name": "OpenAI Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "health"
+                            ]
+                        },
+                        "description": "Check OpenAI service health"
+                    }
+                },
+                {
+                    "name": "Available Models",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/openai/models",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "openai",
+                                "models"
+                            ]
+                        },
+                        "description": "List available OpenAI models"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Documents",
+            "item": [
+                {
+                    "name": "Upload Document",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "chunk_size",
+                                    "value": "1000",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "chunk_overlap",
+                                    "value": "200",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "user_id",
+                                    "value": "test-user",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "metadata",
+                                    "value": "{\"category\": \"test\"}",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents/upload",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents",
+                                "upload"
+                            ]
+                        },
+                        "description": "Upload and process a document"
+                    }
+                },
+                {
+                    "name": "List Documents",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents/?page=1&page_size=20&search=&user_id=",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "page_size",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": ""
+                                },
+                                {
+                                    "key": "user_id",
+                                    "value": ""
+                                }
+                            ]
+                        },
+                        "description": "List documents with pagination and search"
+                    }
+                },
+                {
+                    "name": "Get Document",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents/{{document_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents",
+                                "{{document_id}}"
+                            ]
+                        },
+                        "description": "Get document by ID"
+                    }
+                },
+                {
+                    "name": "Update Document",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Updated Document Title\",\n  \"metadata\": {\n    \"category\": \"updated\",\n    \"tags\": [\"important\"]\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents/{{document_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents",
+                                "{{document_id}}"
+                            ]
+                        },
+                        "description": "Update document metadata"
+                    }
+                },
+                {
+                    "name": "Delete Document",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents/{{document_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents",
+                                "{{document_id}}"
+                            ]
+                        },
+                        "description": "Delete document by ID"
+                    }
+                },
+                {
+                    "name": "Document Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get document statistics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Documents Simple",
+            "item": [
+                {
+                    "name": "Supported Formats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents-simple/formats/supported",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents-simple",
+                                "formats",
+                                "supported"
+                            ]
+                        },
+                        "description": "Get supported document formats"
+                    }
+                },
+                {
+                    "name": "Document Service Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/documents-simple/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "documents-simple",
+                                "health"
+                            ]
+                        },
+                        "description": "Check document service health"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Search",
+            "item": [
+                {
+                    "name": "Semantic Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is artificial intelligence?\",\n  \"limit\": 5,\n  \"threshold\": 0.7,\n  \"user_id\": \"test-user\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/search/semantic",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "search",
+                                "semantic"
+                            ]
+                        },
+                        "description": "Perform semantic vector search"
+                    }
+                },
+                {
+                    "name": "Keyword Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"machine learning algorithms\",\n  \"limit\": 10,\n  \"user_id\": \"test-user\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/search/keyword",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "search",
+                                "keyword"
+                            ]
+                        },
+                        "description": "Perform keyword-based search"
+                    }
+                },
+                {
+                    "name": "Hybrid Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"deep learning neural networks\",\n  \"limit\": 8,\n  \"threshold\": 0.6,\n  \"semantic_weight\": 0.7,\n  \"keyword_weight\": 0.3,\n  \"user_id\": \"test-user\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/search/hybrid",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "search",
+                                "hybrid"
+                            ]
+                        },
+                        "description": "Perform hybrid semantic + keyword search"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Agents",
+            "item": [
+                {
+                    "name": "Registry Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/agents/registry/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "agents",
+                                "registry",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get agent registry statistics"
+                    }
+                },
+                {
+                    "name": "List Agents",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/agents/registry/agents",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "agents",
+                                "registry",
+                                "agents"
+                            ]
+                        },
+                        "description": "List all registered agents"
+                    }
+                },
+                {
+                    "name": "Get Agent State",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/agents/{{agent_id}}/state",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "agents",
+                                "{{agent_id}}",
+                                "state"
+                            ]
+                        },
+                        "description": "Get agent state by ID"
+                    }
+                },
+                {
+                    "name": "System Overview",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/agents/system/overview",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "agents",
+                                "system",
+                                "overview"
+                            ]
+                        },
+                        "description": "Get system overview"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Query Rewriter Agent",
+            "item": [
+                {
+                    "name": "Process Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is machine lerning?\",\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"enable_spell_check\": true,\n  \"enable_expansion\": true,\n  \"max_expansions\": 3\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/query-rewriter/process",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "query-rewriter",
+                                "process"
+                            ]
+                        },
+                        "description": "Process and rewrite a query"
+                    }
+                },
+                {
+                    "name": "Query Rewriter Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/query-rewriter/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "query-rewriter",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get query rewriter agent statistics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Context Decision Agent",
+            "item": [
+                {
+                    "name": "Evaluate Context Necessity",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is the capital of France?\",\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"enable_ai_assessment\": true,\n  \"similarity_threshold\": 0.7\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/context-decision/evaluate",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "context-decision",
+                                "evaluate"
+                            ]
+                        },
+                        "description": "Evaluate whether additional context is needed"
+                    }
+                },
+                {
+                    "name": "Context Decision Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/context-decision/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "context-decision",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get context decision agent statistics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Source Retrieval Agent",
+            "item": [
+                {
+                    "name": "Retrieve Sources",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"artificial intelligence applications\",\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"max_sources\": 5,\n  \"similarity_threshold\": 0.7,\n  \"search_strategy\": \"hybrid\",\n  \"enable_reranking\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/source-retrieval/retrieve",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "source-retrieval",
+                                "retrieve"
+                            ]
+                        },
+                        "description": "Retrieve relevant sources for a query"
+                    }
+                },
+                {
+                    "name": "Source Retrieval Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/source-retrieval/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "source-retrieval",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get source retrieval agent statistics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Answer Generation Agent",
+            "item": [
+                {
+                    "name": "Generate Answer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the main applications of artificial intelligence?\",\n  \"sources\": [\n    {\n      \"content\": \"AI is used in healthcare for diagnosis and treatment recommendations.\",\n      \"metadata\": {\n        \"title\": \"AI in Healthcare\",\n        \"source\": \"medical-journal.pdf\"\n      },\n      \"relevance_score\": 0.9\n    }\n  ],\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"response_format\": \"comprehensive\",\n  \"citation_style\": \"numbered\",\n  \"max_tokens\": 500\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/answer-generation/generate",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "answer-generation",
+                                "generate"
+                            ]
+                        },
+                        "description": "Generate answer with citations"
+                    }
+                },
+                {
+                    "name": "Stream Answer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Explain machine learning algorithms\",\n  \"sources\": [],\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"response_format\": \"detailed\",\n  \"citation_style\": \"apa\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/answer-generation/stream",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "answer-generation",
+                                "stream"
+                            ]
+                        },
+                        "description": "Stream answer generation"
+                    }
+                },
+                {
+                    "name": "Answer Generation Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/answer-generation/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "answer-generation",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get answer generation agent statistics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "RAG Pipeline",
+            "item": [
+                {
+                    "name": "Process Query (Full Pipeline)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the latest developments in artificial intelligence?\",\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"pipeline_config\": {\n    \"enable_query_rewriting\": true,\n    \"enable_context_decision\": true,\n    \"max_sources\": 5,\n    \"response_format\": \"comprehensive\",\n    \"citation_style\": \"numbered\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/rag-pipeline/process",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag-pipeline",
+                                "process"
+                            ]
+                        },
+                        "description": "Process query through full RAG pipeline"
+                    }
+                },
+                {
+                    "name": "Stream Pipeline Response",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Explain quantum computing principles\",\n  \"conversation_history\": [],\n  \"user_id\": \"test-user\",\n  \"stream\": true,\n  \"pipeline_config\": {\n    \"enable_query_rewriting\": true,\n    \"enable_context_decision\": true,\n    \"max_sources\": 3,\n    \"response_format\": \"detailed\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/rag-pipeline/stream",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag-pipeline",
+                                "stream"
+                            ]
+                        },
+                        "description": "Stream RAG pipeline response"
+                    }
+                },
+                {
+                    "name": "Pipeline Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/rag-pipeline/status",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag-pipeline",
+                                "status"
+                            ]
+                        },
+                        "description": "Get RAG pipeline status"
+                    }
+                },
+                {
+                    "name": "Pipeline Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/rag-pipeline/metrics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag-pipeline",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get RAG pipeline metrics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Analytics",
+            "item": [
+                {
+                    "name": "Token Usage Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/token-usage/summary",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analytics",
+                                "token-usage",
+                                "summary"
+                            ]
+                        },
+                        "description": "Get token usage summary"
+                    }
+                },
+                {
+                    "name": "Cost Analysis",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/cost-analysis?days=7",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analytics",
+                                "cost-analysis"
+                            ],
+                            "query": [
+                                {
+                                    "key": "days",
+                                    "value": "7"
+                                }
+                            ]
+                        },
+                        "description": "Get cost analysis for specified days"
+                    }
+                },
+                {
+                    "name": "Performance Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/performance-metrics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analytics",
+                                "performance-metrics"
+                            ]
+                        },
+                        "description": "Get performance metrics"
+                    }
+                },
+                {
+                    "name": "Cost Patterns",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/cost-patterns?days=7",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analytics",
+                                "cost-patterns"
+                            ],
+                            "query": [
+                                {
+                                    "key": "days",
+                                    "value": "7"
+                                }
+                            ]
+                        },
+                        "description": "Get cost pattern analysis"
+                    }
+                },
+                {
+                    "name": "Recent Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/recent-requests?limit=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analytics",
+                                "recent-requests"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Get recent request analyses"
+                    }
+                },
+                {
+                    "name": "Monthly Projection",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/monthly-projection",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "analytics",
+                                "monthly-projection"
+                            ]
+                        },
+                        "description": "Get estimated monthly cost projection"
+                    }
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "document_id",
+            "value": "your-document-id-here",
+            "type": "string"
+        },
+        {
+            "key": "agent_id",
+            "value": "your-agent-id-here",
+            "type": "string"
+        }
+    ]
+}

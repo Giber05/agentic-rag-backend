@@ -1,0 +1,594 @@
+{
+    "info": {
+        "name": "Agentic RAG AI Agent API v1.1",
+        "description": "A sophisticated Retrieval-Augmented Generation (RAG) system featuring 5 specialized AI agents with 94% cost optimization and comprehensive token tracking.",
+        "version": "1.1.0",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "api_v1",
+            "value": "{{base_url}}/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "request_id",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🏥 Health & Status",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Check the health status of the API server"
+                    }
+                },
+                {
+                    "name": "Database Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/database/status",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "database",
+                                "status"
+                            ]
+                        },
+                        "description": "Check the database connection status"
+                    }
+                }
+            ],
+            "description": "Health check and system status endpoints"
+        },
+        {
+            "name": "📊 Analytics & Token Tracking",
+            "item": [
+                {
+                    "name": "Recent Requests",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/analytics/recent-requests?limit=10",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "recent-requests"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Number of requests to return (max: 100)"
+                                }
+                            ]
+                        },
+                        "description": "Get recent request analytics with token usage"
+                    },
+                    "response": [
+                        {
+                            "name": "Recent Requests Response",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"requests\": [\n      {\n        \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\",\n        \"timestamp\": \"2024-01-01T12:00:00Z\",\n        \"query\": \"What is machine learning?\",\n        \"total_tokens\": 847,\n        \"total_cost\": 0.0007,\n        \"pipeline_type\": \"optimized\",\n        \"processing_time\": 2.34\n      }\n    ],\n    \"total_requests\": 25,\n    \"total_tokens\": 21250,\n    \"total_cost\": 0.0175\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Token Usage Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/analytics/token-usage/{{request_id}}",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "token-usage",
+                                "{{request_id}}"
+                            ]
+                        },
+                        "description": "Get detailed token breakdown for a specific request"
+                    },
+                    "response": [
+                        {
+                            "name": "Token Usage Response",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\",\n    \"query\": \"What is machine learning?\",\n    \"total_tokens\": 847,\n    \"total_cost\": 0.0007,\n    \"breakdown\": {\n      \"query_rewriting\": {\n        \"input_tokens\": 0,\n        \"output_tokens\": 0,\n        \"cost\": 0.0000,\n        \"skipped\": true\n      },\n      \"embedding\": {\n        \"input_tokens\": 25,\n        \"output_tokens\": 0,\n        \"cost\": 0.0000025,\n        \"model\": \"text-embedding-ada-002\"\n      },\n      \"answer_generation\": {\n        \"input_tokens\": 645,\n        \"output_tokens\": 177,\n        \"cost\": 0.0006,\n        \"model\": \"gpt-3.5-turbo\"\n      }\n    },\n    \"optimization_savings\": {\n      \"estimated_full_cost\": 0.0588,\n      \"actual_cost\": 0.0007,\n      \"savings_percentage\": 94.5\n    }\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Daily Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/analytics/daily-stats",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "daily-stats"
+                            ]
+                        },
+                        "description": "Get daily usage statistics"
+                    }
+                },
+                {
+                    "name": "Cost Patterns",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/analytics/cost-patterns",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "cost-patterns"
+                            ]
+                        },
+                        "description": "Get cost analysis and patterns"
+                    }
+                },
+                {
+                    "name": "Monthly Projection",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/analytics/monthly-projection",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "monthly-projection"
+                            ]
+                        },
+                        "description": "Get monthly cost projection based on current usage"
+                    }
+                }
+            ],
+            "description": "Token usage analytics and cost monitoring"
+        },
+        {
+            "name": "🔄 RAG Pipeline (Optimized)",
+            "item": [
+                {
+                    "name": "Process Query (Optimized - 94% Cost Reduction)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "ngrok-skip-browser-warning",
+                                "value": "true"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the main features of the Smarco app?\",\n  \"pipeline_config\": {\n    \"max_sources\": 5,\n    \"citation_style\": \"numbered\",\n    \"response_format\": \"markdown\",\n    \"enable_streaming\": false\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/rag/process",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Process a query through the optimized RAG pipeline with 94% cost reduction"
+                    },
+                    "response": [
+                        {
+                            "name": "Optimized Pipeline Response",
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\",\n    \"query\": \"What are the main features of the Smarco app?\",\n    \"status\": \"completed\",\n    \"pipeline_type\": \"optimized\",\n    \"final_response\": {\n      \"response\": {\n        \"content\": \"The Smarco app offers several key features...\",\n        \"citations\": [\n          {\n            \"id\": 1,\n            \"title\": \"Smarco Features Documentation\",\n            \"relevance_score\": 0.95\n          }\n        ],\n        \"quality\": {\n          \"relevance_score\": 0.92,\n          \"overall_quality\": 0.89\n        }\n      }\n    },\n    \"optimization_info\": {\n      \"pipeline_used\": \"optimized\",\n      \"savings_percentage\": 94.5\n    },\n    \"token_usage\": {\n      \"total_tokens\": 847,\n      \"total_cost\": 0.0007\n    }\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Process Query (Full Pipeline)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Complex query requiring full processing\",\n  \"pipeline_config\": {\n    \"max_sources\": 10,\n    \"citation_style\": \"numbered\",\n    \"response_format\": \"markdown\",\n    \"use_premium_models\": true\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/rag/process/full",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "process",
+                                "full"
+                            ]
+                        },
+                        "description": "Process a query through the complete RAG pipeline with all agents"
+                    }
+                },
+                {
+                    "name": "Pipeline Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/rag/pipeline/status",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "pipeline",
+                                "status"
+                            ]
+                        },
+                        "description": "Get current pipeline status and health"
+                    }
+                },
+                {
+                    "name": "Pipeline Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/rag/pipeline/metrics",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "pipeline",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get comprehensive pipeline performance metrics"
+                    }
+                }
+            ],
+            "description": "Optimized RAG pipeline with cost reduction and full pipeline options"
+        },
+        {
+            "name": "🎯 Agent Framework",
+            "item": [
+                {
+                    "name": "List Agents",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/agents",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "agents"
+                            ]
+                        },
+                        "description": "Get list of all registered agents"
+                    }
+                },
+                {
+                    "name": "Agent Performance Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/agents/metrics",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "agents",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get performance metrics for all agents"
+                    }
+                }
+            ],
+            "description": "Agent framework management and coordination"
+        },
+        {
+            "name": "✏️ Query Rewriter Agent",
+            "item": [
+                {
+                    "name": "Process Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is machine learning?\",\n  \"options\": {\n    \"enable_spell_check\": true,\n    \"enable_grammar_check\": true,\n    \"enable_expansion\": true\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/query-rewriter/process",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "query-rewriter",
+                                "process"
+                            ]
+                        },
+                        "description": "Process and rewrite a query for better retrieval"
+                    }
+                },
+                {
+                    "name": "Get Agent Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/query-rewriter/stats",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "query-rewriter",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get performance statistics for Query Rewriter agent"
+                    }
+                }
+            ],
+            "description": "Query optimization and rewriting agent"
+        },
+        {
+            "name": "🤔 Context Decision Agent",
+            "item": [
+                {
+                    "name": "Evaluate Context Necessity",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is the capital of France?\",\n  \"conversation_history\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Hi! How can I help you?\"\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/context-decision/evaluate",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "context-decision",
+                                "evaluate"
+                            ]
+                        },
+                        "description": "Evaluate whether additional context is needed for a query"
+                    }
+                },
+                {
+                    "name": "Get Decision Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/context-decision/metrics",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "context-decision",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get decision accuracy and performance metrics"
+                    }
+                }
+            ],
+            "description": "Context necessity evaluation agent"
+        },
+        {
+            "name": "📚 Source Retrieval Agent",
+            "item": [
+                {
+                    "name": "Retrieve Sources",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"machine learning algorithms\",\n  \"max_results\": 5,\n  \"strategy\": \"semantic\",\n  \"filters\": {\n    \"document_type\": \"pdf\",\n    \"date_range\": \"2023-2024\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/source-retrieval/retrieve",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "source-retrieval",
+                                "retrieve"
+                            ]
+                        },
+                        "description": "Retrieve relevant sources for a query"
+                    }
+                },
+                {
+                    "name": "Get Available Strategies",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/source-retrieval/strategies",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "source-retrieval",
+                                "strategies"
+                            ]
+                        },
+                        "description": "Get list of available retrieval strategies"
+                    }
+                }
+            ],
+            "description": "Source retrieval and ranking agent"
+        },
+        {
+            "name": "💬 Answer Generation Agent",
+            "item": [
+                {
+                    "name": "Generate Answer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is machine learning?\",\n  \"sources\": [\n    {\n      \"title\": \"ML Basics\",\n      \"content\": \"Machine learning is a method of data analysis...\",\n      \"url\": \"https://example.com/ml-basics\"\n    }\n  ],\n  \"options\": {\n    \"citation_style\": \"numbered\",\n    \"response_format\": \"markdown\",\n    \"max_length\": 500,\n    \"model\": \"gpt-3.5-turbo\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/answer-generation/generate",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "answer-generation",
+                                "generate"
+                            ]
+                        },
+                        "description": "Generate an answer with source citations"
+                    }
+                },
+                {
+                    "name": "Get Answer Quality Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/answer-generation/performance",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "answer-generation",
+                                "performance"
+                            ]
+                        },
+                        "description": "Get answer quality and performance metrics"
+                    }
+                }
+            ],
+            "description": "Answer generation with citation agent"
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Set timestamp for requests",
+                    "pm.globals.set('timestamp', new Date().toISOString());"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Common test for all requests",
+                    "pm.test('Response time is less than 5000ms', function () {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                    "});",
+                    "",
+                    "// Store response data for chaining requests",
+                    "if (pm.response.code === 200) {",
+                    "    const responseJson = pm.response.json();",
+                    "    if (responseJson.data && responseJson.data.request_id) {",
+                    "        pm.globals.set('request_id', responseJson.data.request_id);",
+                    "    }",
+                    "    if (responseJson.request_id) {",
+                    "        pm.globals.set('request_id', responseJson.request_id);",
+                    "    }",
+                    "}"
+                ]
+            }
+        }
+    ]
+}

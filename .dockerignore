@@ -1,0 +1,131 @@
+# Mobile app (not needed for backend)
+mobile_app/
+*.apk
+*.ipa
+*.aab
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+docs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+htmlcov/
+.coverage
+.nyc_output
+coverage.xml
+*.cover
+.hypothesis/
+
+# Environment files (should be set via Railway dashboard)
+.env
+.env.*
+!.env.example
+
+# Task management
+tasks/
+tasks.json
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+uploads/
+
+# Node modules (if any)
+node_modules/
+
+# Railway specific
+.railway/
+
+# Documentation
+*.md
+docs/
+
+# Scripts
+scripts/
+
+# Environment files
+.env
+.env.*
+backend/.env
+backend/.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+backend/venv/
+backend/env/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+backend/test_*.py
+backend/tests/
+
+# Build artifacts
+build/
+dist/
+
+# Node modules (if any)
+node_modules/
+
+# Railway specific
+railway.toml
+nixpacks.toml 

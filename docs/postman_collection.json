@@ -1,0 +1,1041 @@
+{
+    "info": {
+        "name": "Agentic RAG AI Agent API",
+        "description": "A sophisticated Retrieval-Augmented Generation (RAG) system featuring 5 specialized AI agents working in coordination to provide contextual, accurate responses with source attribution.",
+        "version": "1.0.0",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{jwt_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "api_v1",
+            "value": "{{base_url}}/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🏥 Health & Status",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Check the health status of the API server"
+                    },
+                    "response": [
+                        {
+                            "name": "Healthy Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/health",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "health"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "body": "{\n  \"status\": \"healthy\",\n  \"timestamp\": \"2024-01-01T12:00:00Z\",\n  \"version\": \"1.0.0\",\n  \"uptime\": 3600\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Database Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/database/status",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "database",
+                                "status"
+                            ]
+                        },
+                        "description": "Check the database connection status"
+                    }
+                }
+            ],
+            "description": "Health check and system status endpoints"
+        },
+        {
+            "name": "🤖 OpenAI Integration",
+            "item": [
+                {
+                    "name": "OpenAI Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/openai/health",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "openai",
+                                "health"
+                            ]
+                        },
+                        "description": "Check OpenAI service connectivity"
+                    }
+                },
+                {
+                    "name": "List Available Models",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/openai/models",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "openai",
+                                "models"
+                            ]
+                        },
+                        "description": "Get list of available OpenAI models"
+                    }
+                },
+                {
+                    "name": "Generate Chat Completion",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"What is machine learning?\"\n    }\n  ],\n  \"model\": \"gpt-3.5-turbo\",\n  \"max_tokens\": 150,\n  \"temperature\": 0.7\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/openai/chat/completions",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "openai",
+                                "chat",
+                                "completions"
+                            ]
+                        },
+                        "description": "Generate chat completion using OpenAI"
+                    }
+                },
+                {
+                    "name": "Generate Embeddings",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"input\": \"Machine learning is a subset of artificial intelligence\",\n  \"model\": \"text-embedding-ada-002\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/openai/embeddings",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "openai",
+                                "embeddings"
+                            ]
+                        },
+                        "description": "Generate embeddings for text"
+                    }
+                },
+                {
+                    "name": "Usage Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/openai/usage/stats",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "openai",
+                                "usage",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get OpenAI API usage statistics"
+                    }
+                }
+            ],
+            "description": "OpenAI service integration and management"
+        },
+        {
+            "name": "📄 Document Management",
+            "item": [
+                {
+                    "name": "Upload Document",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "title",
+                                    "value": "Sample Document",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "A sample document for testing",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/documents/upload",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "documents",
+                                "upload"
+                            ]
+                        },
+                        "description": "Upload and process a document"
+                    }
+                },
+                {
+                    "name": "List Documents",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/documents?limit=10&offset=0",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "documents"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "offset",
+                                    "value": "0"
+                                }
+                            ]
+                        },
+                        "description": "Get list of uploaded documents"
+                    }
+                },
+                {
+                    "name": "Get Document Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/documents/{{document_id}}",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "documents",
+                                "{{document_id}}"
+                            ]
+                        },
+                        "description": "Get details of a specific document"
+                    }
+                },
+                {
+                    "name": "Delete Document",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/documents/{{document_id}}",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "documents",
+                                "{{document_id}}"
+                            ]
+                        },
+                        "description": "Delete a document and its embeddings"
+                    }
+                }
+            ],
+            "description": "Document upload, processing, and management"
+        },
+        {
+            "name": "🔍 Search & Retrieval",
+            "item": [
+                {
+                    "name": "Semantic Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"machine learning algorithms\",\n  \"limit\": 5,\n  \"threshold\": 0.7\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/search/semantic",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "search",
+                                "semantic"
+                            ]
+                        },
+                        "description": "Perform semantic search using vector similarity"
+                    }
+                },
+                {
+                    "name": "Hybrid Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"neural networks deep learning\",\n  \"limit\": 10,\n  \"semantic_weight\": 0.7,\n  \"keyword_weight\": 0.3\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/search/hybrid",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "search",
+                                "hybrid"
+                            ]
+                        },
+                        "description": "Perform hybrid search combining semantic and keyword search"
+                    }
+                }
+            ],
+            "description": "Vector search and retrieval operations"
+        },
+        {
+            "name": "🎯 Agent Framework",
+            "item": [
+                {
+                    "name": "List Agents",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/agents",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "agents"
+                            ]
+                        },
+                        "description": "Get list of all registered agents"
+                    }
+                },
+                {
+                    "name": "Get Agent Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/agents/{{agent_id}}",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "agents",
+                                "{{agent_id}}"
+                            ]
+                        },
+                        "description": "Get details of a specific agent"
+                    }
+                },
+                {
+                    "name": "Agent Performance Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/agents/metrics",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "agents",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get performance metrics for all agents"
+                    }
+                }
+            ],
+            "description": "Agent framework management and coordination"
+        },
+        {
+            "name": "✏️ Query Rewriter Agent",
+            "item": [
+                {
+                    "name": "Process Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is machine learning?\",\n  \"options\": {\n    \"enable_spell_check\": true,\n    \"enable_grammar_check\": true,\n    \"enable_expansion\": true\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/query-rewriter/process",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "query-rewriter",
+                                "process"
+                            ]
+                        },
+                        "description": "Process and rewrite a query for better retrieval"
+                    },
+                    "response": [
+                        {
+                            "name": "Successful Query Rewriting",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"What is machine learning?\",\n  \"options\": {\n    \"enable_spell_check\": true,\n    \"enable_grammar_check\": true,\n    \"enable_expansion\": true\n  }\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/query-rewriter/process",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "query-rewriter",
+                                        "process"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"original_query\": \"What is machine learning?\",\n    \"rewritten_query\": \"What is machine learning and how does it work?\",\n    \"improvements\": [\n      \"Added clarifying context\",\n      \"Expanded for better retrieval\"\n    ],\n    \"confidence\": 0.95,\n    \"processing_time\": 0.234\n  },\n  \"message\": \"Query rewritten successfully\",\n  \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Create Query Rewriter Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"agent_type\": \"QueryRewritingAgent\",\n  \"config\": {\n    \"enable_spell_check\": true,\n    \"enable_grammar_check\": true,\n    \"max_query_length\": 500\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/query-rewriter/agent/create",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "query-rewriter",
+                                "agent",
+                                "create"
+                            ]
+                        },
+                        "description": "Create a new Query Rewriter agent instance"
+                    }
+                },
+                {
+                    "name": "Get Agent Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/query-rewriter/stats",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "query-rewriter",
+                                "stats"
+                            ]
+                        },
+                        "description": "Get performance statistics for Query Rewriter agent"
+                    }
+                }
+            ],
+            "description": "Query optimization and rewriting agent"
+        },
+        {
+            "name": "🤔 Context Decision Agent",
+            "item": [
+                {
+                    "name": "Evaluate Context Necessity",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is the capital of France?\",\n  \"conversation_history\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Hi! How can I help you?\"\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/context-decision/evaluate",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "context-decision",
+                                "evaluate"
+                            ]
+                        },
+                        "description": "Evaluate whether additional context is needed for a query"
+                    },
+                    "response": [
+                        {
+                            "name": "Context Decision Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"What is the capital of France?\",\n  \"conversation_history\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello\"\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": \"Hi! How can I help you?\"\n    }\n  ]\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/context-decision/evaluate",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "context-decision",
+                                        "evaluate"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"needs_context\": false,\n    \"confidence\": 0.98,\n    \"reasoning\": \"Query is factual and self-contained\",\n    \"decision_factors\": {\n      \"query_complexity\": 0.2,\n      \"context_dependency\": 0.1,\n      \"semantic_similarity\": 0.05\n    }\n  },\n  \"message\": \"Context decision completed\",\n  \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Decision Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/context-decision/metrics",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "context-decision",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get decision accuracy and performance metrics"
+                    }
+                },
+                {
+                    "name": "Create Context Decision Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"agent_type\": \"ContextDecisionAgent\",\n  \"config\": {\n    \"similarity_threshold\": 0.8,\n    \"context_window_size\": 5\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/context-decision/agent/create",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "context-decision",
+                                "agent",
+                                "create"
+                            ]
+                        },
+                        "description": "Create a new Context Decision agent instance"
+                    }
+                }
+            ],
+            "description": "Context necessity evaluation agent"
+        },
+        {
+            "name": "📚 Source Retrieval Agent",
+            "item": [
+                {
+                    "name": "Retrieve Sources",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"machine learning algorithms\",\n  \"max_results\": 5,\n  \"strategy\": \"semantic\",\n  \"filters\": {\n    \"document_type\": \"pdf\",\n    \"date_range\": \"2023-2024\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/source-retrieval/retrieve",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "source-retrieval",
+                                "retrieve"
+                            ]
+                        },
+                        "description": "Retrieve relevant sources for a query"
+                    },
+                    "response": [
+                        {
+                            "name": "Source Retrieval Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"machine learning algorithms\",\n  \"max_results\": 5,\n  \"strategy\": \"semantic\",\n  \"filters\": {\n    \"document_type\": \"pdf\",\n    \"date_range\": \"2023-2024\"\n  }\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/source-retrieval/retrieve",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "source-retrieval",
+                                        "retrieve"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"sources\": [\n      {\n        \"id\": \"doc_123\",\n        \"title\": \"Introduction to Machine Learning\",\n        \"content\": \"Machine learning is a subset of artificial intelligence...\",\n        \"relevance_score\": 0.95,\n        \"metadata\": {\n          \"author\": \"John Doe\",\n          \"publication_date\": \"2023-06-15\",\n          \"document_type\": \"pdf\"\n        }\n      }\n    ],\n    \"total_found\": 15,\n    \"strategy_used\": \"semantic\",\n    \"processing_time\": 0.456\n  },\n  \"message\": \"Sources retrieved successfully\",\n  \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Retrieval Performance",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/source-retrieval/performance",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "source-retrieval",
+                                "performance"
+                            ]
+                        },
+                        "description": "Get retrieval performance metrics"
+                    }
+                },
+                {
+                    "name": "Get Available Strategies",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/source-retrieval/strategies",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "source-retrieval",
+                                "strategies"
+                            ]
+                        },
+                        "description": "Get list of available retrieval strategies"
+                    }
+                }
+            ],
+            "description": "Source retrieval and ranking agent"
+        },
+        {
+            "name": "💬 Answer Generation Agent",
+            "item": [
+                {
+                    "name": "Generate Answer",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What is machine learning?\",\n  \"sources\": [\n    {\n      \"title\": \"ML Basics\",\n      \"content\": \"Machine learning is a method of data analysis...\",\n      \"url\": \"https://example.com/ml-basics\"\n    }\n  ],\n  \"options\": {\n    \"citation_style\": \"numbered\",\n    \"response_format\": \"markdown\",\n    \"max_length\": 500\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/answer-generation/generate",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "answer-generation",
+                                "generate"
+                            ]
+                        },
+                        "description": "Generate an answer with source citations"
+                    },
+                    "response": [
+                        {
+                            "name": "Answer Generation Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"What is machine learning?\",\n  \"sources\": [\n    {\n      \"title\": \"ML Basics\",\n      \"content\": \"Machine learning is a method of data analysis...\",\n      \"url\": \"https://example.com/ml-basics\"\n    }\n  ],\n  \"options\": {\n    \"citation_style\": \"numbered\",\n    \"response_format\": \"markdown\",\n    \"max_length\": 500\n  }\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/answer-generation/generate",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "answer-generation",
+                                        "generate"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"answer\": \"Machine learning is a method of data analysis that automates analytical model building [1]. It uses algorithms that iteratively learn from data...\",\n    \"citations\": [\n      {\n        \"id\": 1,\n        \"title\": \"ML Basics\",\n        \"url\": \"https://example.com/ml-basics\"\n      }\n    ],\n    \"quality_score\": 0.92,\n    \"confidence\": 0.88,\n    \"processing_time\": 1.234\n  },\n  \"message\": \"Answer generated successfully\",\n  \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Stream Answer Generation",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Explain neural networks\",\n  \"sources\": [\n    {\n      \"title\": \"Neural Networks Guide\",\n      \"content\": \"Neural networks are computing systems...\"\n    }\n  ],\n  \"options\": {\n    \"citation_style\": \"bracketed\",\n    \"response_format\": \"markdown\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/answer-generation/stream",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "answer-generation",
+                                "stream"
+                            ]
+                        },
+                        "description": "Stream answer generation in real-time"
+                    }
+                },
+                {
+                    "name": "Get Answer Quality Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/answer-generation/performance",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "answer-generation",
+                                "performance"
+                            ]
+                        },
+                        "description": "Get answer quality and performance metrics"
+                    }
+                }
+            ],
+            "description": "Answer generation with citation agent"
+        },
+        {
+            "name": "🔄 RAG Pipeline",
+            "item": [
+                {
+                    "name": "Process Query (Complete Pipeline)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Explain neural networks\",\n  \"conversation_history\": [],\n  \"options\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 5\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/rag/process",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Process a query through the complete RAG pipeline"
+                    },
+                    "response": [
+                        {
+                            "name": "RAG Pipeline Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"Explain neural networks\",\n  \"conversation_history\": [],\n  \"options\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 5\n  }\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/rag/process",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "rag",
+                                        "process"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"answer\": \"Neural networks are computing systems inspired by biological neural networks [1][2]. They consist of interconnected nodes (neurons) that process information...\",\n    \"sources\": [\n      {\n        \"id\": \"doc_456\",\n        \"title\": \"Neural Network Fundamentals\",\n        \"relevance_score\": 0.94\n      }\n    ],\n    \"pipeline_stages\": {\n      \"query_rewriting\": {\"status\": \"completed\", \"time\": 0.234},\n      \"context_decision\": {\"status\": \"completed\", \"time\": 0.123},\n      \"source_retrieval\": {\"status\": \"completed\", \"time\": 0.456},\n      \"answer_generation\": {\"status\": \"completed\", \"time\": 1.234}\n    },\n    \"total_processing_time\": 2.047,\n    \"quality_metrics\": {\n      \"relevance\": 0.92,\n      \"completeness\": 0.88,\n      \"accuracy\": 0.95\n    }\n  },\n  \"message\": \"RAG pipeline completed successfully\",\n  \"request_id\": \"123e4567-e89b-12d3-a456-426614174000\"\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Stream Pipeline Response",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the applications of AI?\",\n  \"conversation_history\": [],\n  \"options\": {\n    \"enable_streaming\": true,\n    \"citation_style\": \"numbered\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/rag/stream",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "stream"
+                            ]
+                        },
+                        "description": "Stream RAG pipeline response in real-time"
+                    }
+                },
+                {
+                    "name": "Get Pipeline Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/rag/pipeline/status",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "pipeline",
+                                "status"
+                            ]
+                        },
+                        "description": "Get current pipeline status and health"
+                    }
+                },
+                {
+                    "name": "Get Pipeline Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/rag/pipeline/metrics",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "pipeline",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get comprehensive pipeline performance metrics"
+                    }
+                }
+            ],
+            "description": "Complete RAG pipeline orchestration"
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Set timestamp for requests",
+                    "pm.globals.set('timestamp', new Date().toISOString());"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Common test for all requests",
+                    "pm.test('Response time is less than 5000ms', function () {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                    "});",
+                    "",
+                    "pm.test('Response has request ID', function () {",
+                    "    pm.expect(pm.response.headers.get('X-Request-ID')).to.not.be.null;",
+                    "});",
+                    "",
+                    "// Store response data for chaining requests",
+                    "if (pm.response.code === 200) {",
+                    "    const responseJson = pm.response.json();",
+                    "    if (responseJson.data && responseJson.data.id) {",
+                    "        pm.globals.set('last_created_id', responseJson.data.id);",
+                    "    }",
+                    "}"
+                ]
+            }
+        }
+    ]
+}
