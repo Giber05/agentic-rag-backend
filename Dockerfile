@@ -45,5 +45,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Expose port (Railway will set PORT dynamically)
 EXPOSE ${PORT:-8000}
 
-# Production startup command with proper worker configuration
-CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1 --timeout-keep-alive 30 --access-log --log-level info"] 
+# Production startup command with proper environment variable handling
+CMD bash -c "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1 --timeout-keep-alive 30 --access-log --log-level info" 

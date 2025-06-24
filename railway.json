@@ -8,7 +8,6 @@
         "restartPolicyType": "ON_FAILURE",
         "restartPolicyMaxRetries": 5,
         "healthcheckPath": "/health",
-        "healthcheckTimeout": 60,
-        "startCommand": "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 30 --access-log"
+        "healthcheckTimeout": 60
     }
 }
