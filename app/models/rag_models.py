@@ -2,8 +2,8 @@
 Pydantic models for RAG Pipeline API requests and responses.
 """
 
-from pydantic import BaseModel, Field
-from typing import Dict, List, Optional, Any
+from pydantic import BaseModel, Field, validator
+from typing import Dict, List, Optional, Any, Literal
 from datetime import datetime
 
 
@@ -19,6 +19,10 @@ class BaseAPIModel(BaseModel):
 class RAGRequest(BaseAPIModel):
     """Standard RAG request model."""
     query: str = Field(..., description="User query to process", min_length=1, max_length=2000)
+    source: Literal["db", "jira", "confluence", "jira&db", "confluence&db", "jira&confluence", "all", "intelligent"] = Field(
+        default="db", 
+        description="Data source for retrieval: 'db' (vector database), 'jira' (Jira MCP), 'confluence' (Confluence MCP), combinations, or 'intelligent' (AI-orchestrated chaining)"
+    )
     conversation_history: Optional[List[Dict[str, Any]]] = Field(None, description="Previous conversation messages")
     user_context: Optional[Dict[str, Any]] = Field(None, description="Additional user context")
     pipeline_config: Optional[Dict[str, Any]] = Field(None, description="Pipeline configuration overrides")
@@ -28,10 +32,12 @@ class ProcessingResult(BaseAPIModel):
     """Result model for RAG processing."""
     request_id: str = Field(..., description="Unique request identifier")
     query: str = Field(..., description="Original user query")
+    source: str = Field(..., description="Data source used for retrieval")
     status: str = Field(..., description="Processing status")
     pipeline_type: str = Field(..., description="Type of pipeline used (optimized/full)")
     final_response: Optional[Dict[str, Any]] = Field(None, description="Generated response with citations")
     stage_results: Dict[str, Any] = Field(default_factory=dict, description="Results from each stage")
+    source_stats: Optional[Dict[str, Any]] = Field(None, description="Statistics about source retrieval")
     total_duration: float = Field(..., description="Total processing time in seconds")
     optimization_info: Optional[Dict[str, Any]] = Field(None, description="Optimization and cost information")
 
@@ -39,6 +45,10 @@ class ProcessingResult(BaseAPIModel):
 class RAGProcessRequest(BaseAPIModel):
     """Request model for RAG pipeline processing."""
     query: str = Field(..., description="User query to process through RAG pipeline", min_length=1, max_length=2000)
+    source: Literal["db", "jira", "confluence", "jira&db", "confluence&db", "jira&confluence", "all", "intelligent"] = Field(
+        default="db", 
+        description="Data source for retrieval: 'db' (vector database), 'jira' (Jira MCP), 'confluence' (Confluence MCP), combinations, or 'intelligent' (AI-orchestrated chaining)"
+    )
     conversation_history: Optional[List[Dict[str, Any]]] = Field(None, description="Previous conversation messages for context")
     user_context: Optional[Dict[str, Any]] = Field(None, description="Additional user context information")
     pipeline_config: Optional[Dict[str, Any]] = Field(None, description="Pipeline-specific configuration overrides")
@@ -47,6 +57,10 @@ class RAGProcessRequest(BaseAPIModel):
 class RAGStreamRequest(BaseAPIModel):
     """Request model for RAG pipeline streaming."""
     query: str = Field(..., description="User query to process through RAG pipeline", min_length=1, max_length=2000)
+    source: Literal["db", "jira", "confluence", "jira&db", "confluence&db", "jira&confluence", "all", "intelligent"] = Field(
+        default="db", 
+        description="Data source for retrieval: 'db' (vector database), 'jira' (Jira MCP), 'confluence' (Confluence MCP), combinations, or 'intelligent' (AI-orchestrated chaining)"
+    )
     conversation_history: Optional[List[Dict[str, Any]]] = Field(None, description="Previous conversation messages for context")
     user_context: Optional[Dict[str, Any]] = Field(None, description="Additional user context information")
     pipeline_config: Optional[Dict[str, Any]] = Field(None, description="Pipeline-specific configuration overrides")
@@ -56,9 +70,11 @@ class RAGProcessResponse(BaseAPIModel):
     """Response model for RAG pipeline processing."""
     request_id: str = Field(..., description="Unique identifier for the pipeline request")
     query: str = Field(..., description="Original user query")
+    source: str = Field(..., description="Data source used for retrieval")
     status: str = Field(..., description="Pipeline execution status")
     final_response: Optional[Dict[str, Any]] = Field(None, description="Final generated response with citations")
     stage_results: Dict[str, Any] = Field(..., description="Results from each pipeline stage")
+    source_stats: Optional[Dict[str, Any]] = Field(None, description="Statistics about source retrieval")
     metadata: Dict[str, Any] = Field(..., description="Pipeline execution metadata")
     total_duration: float = Field(..., description="Total pipeline execution time in seconds")
     error: Optional[str] = Field(None, description="Error message if pipeline failed")

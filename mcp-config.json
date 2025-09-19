@@ -1,0 +1,18 @@
+{
+    "servers": {
+        "atlassian": {
+            "command": "uvx",
+            "args": [
+                "mcp-atlassian"
+            ],
+            "env": {
+                "JIRA_URL": "https://sprout-id.atlassian.net",
+                "JIRA_USERNAME": "azki.darmawan@sprout.co.id",
+                "JIRA_API_TOKEN": "ATATT3xFfGF0huLLNYLbFKH6Jp8lKLUNkm9PHJje4S8Ep7k7uS6jtjAcpKnswP0vzArpXUKNhhCtKRgXc1bTPBuorsygVB8lVRPimZJu96dt_68py2anboleC2q8uH6YaDMkY178ZKE-0kcZXadVxjFRW3qmZNJK-aow_n7fAr_dOsQxf3C4m54=D2C6AB38",
+                "CONFLUENCE_URL": "https://sprout-id.atlassian.net/wiki",
+                "CONFLUENCE_USERNAME": "azki.darmawan@sprout.co.id",
+                "CONFLUENCE_API_TOKEN": "ATATT3xFfGF0huLLNYLbFKH6Jp8lKLUNkm9PHJje4S8Ep7k7uS6jtjAcpKnswP0vzArpXUKNhhCtKRgXc1bTPBuorsygVB8lVRPimZJu96dt_68py2anboleC2q8uH6YaDMkY178ZKE-0kcZXadVxjFRW3qmZNJK-aow_n7fAr_dOsQxf3C4m54=D2C6AB38"
+            }
+        }
+    }
+}

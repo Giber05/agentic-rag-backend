@@ -12,6 +12,28 @@ from .base import BaseAgent, AgentState, AgentStatus, AgentMessage
 logger = logging.getLogger(__name__)
 
 
+def register_default_agents(registry: 'AgentRegistry') -> None:
+    """Register default agent types with the registry."""
+    from .context_decision import ContextDecisionAgent
+    from .query_rewriter import QueryRewritingAgent
+    from .source_retrieval import SourceRetrievalAgent
+    from .enhanced_source_retrieval import EnhancedSourceRetrievalAgent
+    from .answer_generation import AnswerGenerationAgent
+    from .coordinator import AgentCoordinator
+    from .intelligent_mcp_agent import IntelligentMCPAgent
+    
+    # Register all agent types
+    registry.register_agent_type("context_decision", ContextDecisionAgent)
+    registry.register_agent_type("query_rewriter", QueryRewritingAgent)
+    registry.register_agent_type("source_retrieval", SourceRetrievalAgent)
+    registry.register_agent_type("enhanced_source_retrieval", EnhancedSourceRetrievalAgent)
+    registry.register_agent_type("answer_generation", AnswerGenerationAgent)
+    registry.register_agent_type("coordinator", AgentCoordinator)
+    registry.register_agent_type("intelligent_mcp", IntelligentMCPAgent)
+    
+    logger.info("Default agent types registered including IntelligentMCPAgent")
+
+
 class AgentRegistry:
     """
     Registry for managing multiple agents in the system.
@@ -195,6 +217,15 @@ class AgentRegistry:
             agent for agent in self._agents.values()
             if agent.agent_type == agent_type
         ]
+    
+    def get_available_agent_types(self) -> List[str]:
+        """
+        Get list of available registered agent types.
+        
+        Returns:
+            List of agent type names that can be instantiated
+        """
+        return list(self._agent_types.keys())
     
     def list_agents(self) -> List[BaseAgent]:
         """

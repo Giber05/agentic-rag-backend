@@ -1,0 +1,577 @@
+{
+    "info": {
+        "name": "🧠 Intelligent MCP - Quick Test",
+        "description": "Focused collection for testing the new Intelligent MCP Chaining features quickly. Perfect for development and testing the smart operation orchestration across Jira and Confluence.",
+        "version": "1.0.0",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "authToken",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🔥 Quick Health Checks",
+            "item": [
+                {
+                    "name": "1. System Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Intelligent MCP Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/intelligent/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "intelligent",
+                                "health"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🧠 Intelligent MCP Core Features",
+            "item": [
+                {
+                    "name": "1. Issue Analysis Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Show me details for issue PROJ-123 and find related documentation\",\n  \"source\": \"intelligent\",\n  \"user_context\": {\n    \"user_id\": \"test_user\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Test intelligent chaining for issue analysis + documentation search"
+                    }
+                },
+                {
+                    "name": "2. Project Overview Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What's the current status of project DEMO?\",\n  \"source\": \"intelligent\",\n  \"user_context\": {\n    \"user_id\": \"project_manager\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Test intelligent project overview with combined Jira + Confluence search"
+                    }
+                },
+                {
+                    "name": "3. Documentation Search Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Find documentation about API integration guidelines\",\n  \"source\": \"intelligent\",\n  \"user_context\": {\n    \"user_id\": \"developer\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Test documentation-focused intelligent search"
+                    }
+                },
+                {
+                    "name": "4. Troubleshooting Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"How to fix authentication errors in the API?\",\n  \"source\": \"intelligent\",\n  \"user_context\": {\n    \"user_id\": \"support_agent\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Test troubleshooting workflow with Confluence docs + Jira issues"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "👁️ Operation Preview & Planning",
+            "item": [
+                {
+                    "name": "1. Preview Issue Analysis",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Show me details for issue PROJ-123 and related docs\",\n  \"config\": {\n    \"max_operations\": 3\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/intelligent/preview",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "intelligent",
+                                "preview"
+                            ]
+                        },
+                        "description": "Preview operation plan without execution"
+                    }
+                },
+                {
+                    "name": "2. Preview Project Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Find all high priority bugs in project DEMO\",\n  \"config\": {\n    \"max_operations\": 5,\n    \"confidence_threshold\": 0.4\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/intelligent/preview",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "intelligent",
+                                "preview"
+                            ]
+                        },
+                        "description": "Preview complex project search operations"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📊 Performance Monitoring",
+            "item": [
+                {
+                    "name": "1. Get Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/intelligent/statistics",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "intelligent",
+                                "statistics"
+                            ]
+                        },
+                        "description": "Get intelligent MCP performance statistics"
+                    }
+                },
+                {
+                    "name": "2. Pipeline Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/pipeline/metrics",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "pipeline",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get overall pipeline performance metrics"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "⚙️ Configuration Management",
+            "item": [
+                {
+                    "name": "1. Get Current Config",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/config",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "config"
+                            ]
+                        },
+                        "description": "Get current intelligent MCP configuration"
+                    }
+                },
+                {
+                    "name": "2. Update Performance Settings",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"updates\": {\n    \"performance\": {\n      \"max_operations\": 5,\n      \"timeout\": 30.0,\n      \"confidence_threshold\": 0.3,\n      \"cost_limit\": 1.5\n    }\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/config",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "config"
+                            ]
+                        },
+                        "description": "Update intelligent MCP performance settings"
+                    }
+                },
+                {
+                    "name": "3. Get Operation Templates",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/config/templates",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "config",
+                                "templates"
+                            ]
+                        },
+                        "description": "Get all available operation templates"
+                    }
+                },
+                {
+                    "name": "4. Add Custom Template",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"quick_debug\",\n  \"intent_types\": [\"troubleshooting\"],\n  \"operations\": [\n    {\n      \"type\": \"CONFLUENCE_SEARCH\",\n      \"params\": {\n        \"query\": \"troubleshooting {error_type}\"\n      }\n    },\n    {\n      \"type\": \"JIRA_SEARCH\",\n      \"params\": {\n        \"jql\": \"text ~ '{error_type}' AND status in (Open, 'In Progress')\"\n      }\n    }\n  ],\n  \"priority\": 8,\n  \"description\": \"Quick debugging workflow\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/config/templates",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "config",
+                                "templates"
+                            ]
+                        },
+                        "description": "Add a custom operation template"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔧 Direct MCP Testing",
+            "item": [
+                {
+                    "name": "1. MCP Jira Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/mcp/jira/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "mcp",
+                                "jira",
+                                "health"
+                            ]
+                        },
+                        "description": "Test direct MCP Jira connectivity"
+                    }
+                },
+                {
+                    "name": "2. Test Multi-Source Retrieval",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"project status\",\n  \"source\": \"jira&confluence\",\n  \"max_results\": 5\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/agents/source-retrieval/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "agents",
+                                "source-retrieval",
+                                "process"
+                            ]
+                        },
+                        "description": "Test enhanced source retrieval with multiple sources"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🚀 Comparison Tests",
+            "item": [
+                {
+                    "name": "1. Intelligent vs Standard - Same Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What issues are currently blocking our release?\",\n  \"source\": \"all\",\n  \"user_context\": {\n    \"user_id\": \"comparison_test\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Test standard multi-source for comparison"
+                    }
+                },
+                {
+                    "name": "2. Intelligent - Same Query",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What issues are currently blocking our release?\",\n  \"source\": \"intelligent\",\n  \"user_context\": {\n    \"user_id\": \"comparison_test\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v1/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Test intelligent chaining for comparison"
+                    }
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "exec": [
+                    "// Set timestamp for tracking request times",
+                    "pm.globals.set('requestStart', Date.now());"
+                ],
+                "type": "text/javascript"
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "exec": [
+                    "// Basic response validation",
+                    "pm.test('Response is successful', function () {",
+                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                    "});",
+                    "",
+                    "// Response time tracking",
+                    "const responseTime = pm.response.responseTime;",
+                    "pm.test('Response time is acceptable (< 30s)', function () {",
+                    "    pm.expect(responseTime).to.be.below(30000);",
+                    "});",
+                    "",
+                    "// Log key metrics for intelligent MCP responses",
+                    "if (pm.response.json()) {",
+                    "    const response = pm.response.json();",
+                    "    ",
+                    "    // Log intelligent MCP specific metrics",
+                    "    if (response.metadata && response.metadata.total_operations) {",
+                    "        console.log(`🧠 Operations: ${response.metadata.total_operations}, Duration: ${response.metadata.chain_duration}s, Intent: ${response.metadata.intent}`);",
+                    "    }",
+                    "    ",
+                    "    // Log health check results",
+                    "    if (response.healthy !== undefined) {",
+                    "        console.log(`🔥 Health: ${response.healthy ? 'HEALTHY' : 'UNHEALTHY'}`);",
+                    "    }",
+                    "    ",
+                    "    // Auto-extract auth token if present",
+                    "    if (response.access_token) {",
+                    "        pm.collectionVariables.set('authToken', response.access_token);",
+                    "    }",
+                    "}",
+                    "",
+                    "// Track processing time",
+                    "const startTime = pm.globals.get('requestStart');",
+                    "if (startTime) {",
+                    "    const totalTime = Date.now() - parseInt(startTime);",
+                    "    console.log(`⏱️ Total request time: ${totalTime}ms`);",
+                    "}"
+                ],
+                "type": "text/javascript"
+            }
+        }
+    ]
+}

@@ -329,13 +329,12 @@ def get_agent_metrics() -> AgentMetrics:
 @lru_cache()
 def get_agent_registry() -> AgentRegistry:
     """Get agent registry instance"""
+    from ..agents.registry import register_default_agents
+    
     registry = AgentRegistry()
     
-    # Register agent types
-    registry.register_agent_type("query_rewriter", QueryRewritingAgent)
-    registry.register_agent_type("context_decision", ContextDecisionAgent)
-    registry.register_agent_type("source_retrieval", SourceRetrievalAgent)
-    registry.register_agent_type("answer_generation", AnswerGenerationAgent)
+    # Register all default agent types (including enhanced source retrieval)
+    register_default_agents(registry)
     
     return registry
 

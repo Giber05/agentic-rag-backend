@@ -1,0 +1,1173 @@
+{
+    "info": {
+        "name": "Agentic RAG - Intelligent MCP Collection",
+        "description": "Complete Postman collection for the Agentic RAG AI Agent backend with Intelligent MCP Chaining capabilities. This collection includes all endpoints for document processing, RAG pipeline operations, intelligent MCP operations, and configuration management.",
+        "version": "2.0.0",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8000",
+            "type": "string",
+            "description": "Base URL for the API"
+        },
+        {
+            "key": "apiVersion",
+            "value": "v1",
+            "type": "string",
+            "description": "API version"
+        },
+        {
+            "key": "authToken",
+            "value": "",
+            "type": "string",
+            "description": "Authentication token (if required)"
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{authToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "item": [
+        {
+            "name": "🔥 Health & Status",
+            "item": [
+                {
+                    "name": "System Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Check overall system health status"
+                    }
+                },
+                {
+                    "name": "Pipeline Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "health"
+                            ]
+                        },
+                        "description": "Check RAG pipeline health and all agents status"
+                    }
+                },
+                {
+                    "name": "Intelligent MCP Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/intelligent/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "intelligent",
+                                "health"
+                            ]
+                        },
+                        "description": "Check intelligent MCP agent and orchestrator health"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🧠 Intelligent MCP Operations",
+            "description": "Smart chained operations across Jira and Confluence",
+            "item": [
+                {
+                    "name": "Process Query with Intelligent MCP",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Show me details for issue PROJ-123 and related documentation\",\n  \"source\": \"intelligent\",\n  \"context\": {\n    \"user_id\": \"test_user\",\n    \"session_id\": \"session_123\"\n  },\n  \"config\": {\n    \"max_operations\": 5,\n    \"timeout\": 30.0,\n    \"confidence_threshold\": 0.3\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Process a query using intelligent operation chaining across Jira and Confluence"
+                    }
+                },
+                {
+                    "name": "Preview Operation Plan",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Find all high priority bugs in project DEMO\",\n  \"config\": {\n    \"max_operations\": 3,\n    \"confidence_threshold\": 0.5\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/intelligent/preview",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "intelligent",
+                                "preview"
+                            ]
+                        },
+                        "description": "Preview the operation plan for a query without executing it"
+                    }
+                },
+                {
+                    "name": "Get Intelligent MCP Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/intelligent/statistics",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "intelligent",
+                                "statistics"
+                            ]
+                        },
+                        "description": "Get performance statistics and metrics for intelligent MCP operations"
+                    }
+                },
+                {
+                    "name": "Configure Intelligent MCP Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"max_operations\": 5,\n  \"timeout\": 30.0,\n  \"confidence_threshold\": 0.3,\n  \"enable_caching\": true,\n  \"cost_limit\": 1.0\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/intelligent/configure",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "intelligent",
+                                "configure"
+                            ]
+                        },
+                        "description": "Update configuration settings for the intelligent MCP agent"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "⚙️ Configuration Management",
+            "description": "Manage intelligent MCP configuration and operation templates",
+            "item": [
+                {
+                    "name": "Get Configuration",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config"
+                            ]
+                        },
+                        "description": "Retrieve current intelligent MCP configuration including all settings and templates"
+                    }
+                },
+                {
+                    "name": "Update Configuration",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"updates\": {\n    \"performance\": {\n      \"max_operations\": 5,\n      \"timeout\": 30.0,\n      \"confidence_threshold\": 0.3\n    },\n    \"intelligence\": {\n      \"issue_analysis_weight\": 0.3,\n      \"documentation_search_weight\": 0.2\n    },\n    \"enable_streaming\": true\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config"
+                            ]
+                        },
+                        "description": "Update intelligent MCP configuration settings"
+                    }
+                },
+                {
+                    "name": "Get Operation Templates",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config/templates",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config",
+                                "templates"
+                            ]
+                        },
+                        "description": "Retrieve all available operation templates for intelligent MCP operations"
+                    }
+                },
+                {
+                    "name": "Add Operation Template",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"custom_workflow\",\n  \"intent_types\": [\"custom\"],\n  \"operations\": [\n    {\n      \"type\": \"JIRA_SEARCH\",\n      \"params\": {\n        \"jql\": \"project = {project}\"\n      }\n    },\n    {\n      \"type\": \"CONFLUENCE_SEARCH\",\n      \"params\": {\n        \"query\": \"{project} documentation\"\n      }\n    }\n  ],\n  \"conditions\": {\n    \"requires_project\": true\n  },\n  \"priority\": 5,\n  \"enabled\": true,\n  \"description\": \"Custom project workflow combining Jira and Confluence search\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config/templates",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config",
+                                "templates"
+                            ]
+                        },
+                        "description": "Add a new operation template for intelligent MCP operations"
+                    }
+                },
+                {
+                    "name": "Remove Operation Template",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config/templates/custom_workflow",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config",
+                                "templates",
+                                "custom_workflow"
+                            ]
+                        },
+                        "description": "Remove an operation template by name"
+                    }
+                },
+                {
+                    "name": "Get Performance Settings",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config/performance",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config",
+                                "performance"
+                            ]
+                        },
+                        "description": "Retrieve current performance and resource configuration settings"
+                    }
+                },
+                {
+                    "name": "Update Performance Settings",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"max_operations\": 10,\n  \"timeout\": 45.0,\n  \"confidence_threshold\": 0.4,\n  \"cost_limit\": 2.0,\n  \"enable_caching\": true,\n  \"cache_ttl\": 600\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config/performance",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config",
+                                "performance"
+                            ]
+                        },
+                        "description": "Update performance and resource configuration settings"
+                    }
+                },
+                {
+                    "name": "Reset Configuration to Defaults",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/config/reset",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "config",
+                                "reset"
+                            ]
+                        },
+                        "description": "Reset intelligent MCP configuration to default values"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🚀 RAG Pipeline",
+            "description": "Standard and optimized RAG processing endpoints",
+            "item": [
+                {
+                    "name": "Process Query (Optimized)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the latest issues in the project?\",\n  \"source\": \"db\",\n  \"conversation_history\": [],\n  \"user_context\": {\n    \"user_id\": \"test_user\"\n  },\n  \"pipeline_config\": {\n    \"enable_caching\": true,\n    \"max_duration\": 30.0\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/process?use_full_pipeline=false",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "process"
+                            ],
+                            "query": [
+                                {
+                                    "key": "use_full_pipeline",
+                                    "value": "false",
+                                    "description": "Use optimized pipeline for cost efficiency"
+                                }
+                            ]
+                        },
+                        "description": "Process a query through the optimized RAG pipeline (80-90% cost savings)"
+                    }
+                },
+                {
+                    "name": "Process Query (Full Pipeline)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Provide comprehensive analysis of our project status\",\n  \"source\": \"all\",\n  \"conversation_history\": [],\n  \"user_context\": {\n    \"user_id\": \"premium_user\"\n  },\n  \"pipeline_config\": {\n    \"enable_caching\": true,\n    \"max_duration\": 60.0\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/process/full",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "process",
+                                "full"
+                            ]
+                        },
+                        "description": "Process a query through the complete RAG pipeline with all agents"
+                    }
+                },
+                {
+                    "name": "Stream Query Processing",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Stream me updates on project progress\",\n  \"source\": \"jira&db\",\n  \"conversation_history\": [],\n  \"user_context\": {\n    \"user_id\": \"stream_user\"\n  },\n  \"pipeline_config\": {\n    \"enable_streaming\": true\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/stream",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "stream"
+                            ]
+                        },
+                        "description": "Process a query with real-time streaming updates"
+                    }
+                },
+                {
+                    "name": "Pipeline Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/pipeline/status",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "pipeline",
+                                "status"
+                            ]
+                        },
+                        "description": "Get current status and metrics of the RAG pipeline"
+                    }
+                },
+                {
+                    "name": "Pipeline Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/pipeline/metrics",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "pipeline",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get detailed performance metrics for the RAG pipeline"
+                    }
+                },
+                {
+                    "name": "Configure Pipeline",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"max_pipeline_duration\": 45.0,\n  \"enable_fallbacks\": true,\n  \"enable_caching\": true,\n  \"enable_streaming\": true,\n  \"cache_ttl\": 300\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/pipeline/configure",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "pipeline",
+                                "configure"
+                            ]
+                        },
+                        "description": "Update RAG pipeline configuration settings"
+                    }
+                },
+                {
+                    "name": "Clear Pipeline Cache",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/rag/pipeline/cache",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "rag",
+                                "pipeline",
+                                "cache"
+                            ]
+                        },
+                        "description": "Clear the RAG pipeline result cache"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🤖 Individual Agents",
+            "description": "Test individual RAG agents",
+            "item": [
+                {
+                    "name": "Query Rewriter Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"bugs in the system\",\n  \"context\": {\n    \"conversation_history\": []\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/agents/query-rewriter/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "agents",
+                                "query-rewriter",
+                                "process"
+                            ]
+                        },
+                        "description": "Test the query rewriting agent to optimize search queries"
+                    }
+                },
+                {
+                    "name": "Context Decision Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What issues are currently blocking our release?\",\n  \"conversation_history\": [],\n  \"user_context\": {\n    \"user_id\": \"product_manager\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/agents/context-decision/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "agents",
+                                "context-decision",
+                                "process"
+                            ]
+                        },
+                        "description": "Test the context decision agent for determining optimal sources"
+                    }
+                },
+                {
+                    "name": "Source Retrieval Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"project status updates\",\n  \"source\": \"jira&confluence\",\n  \"max_results\": 10\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/agents/source-retrieval/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "agents",
+                                "source-retrieval",
+                                "process"
+                            ]
+                        },
+                        "description": "Test the source retrieval agent for fetching relevant information"
+                    }
+                },
+                {
+                    "name": "Answer Generation Agent",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the current sprint goals?\",\n  \"sources\": [\n    {\n      \"id\": \"source_1\",\n      \"title\": \"Sprint Planning Document\",\n      \"content\": \"Our current sprint focuses on bug fixes and performance improvements.\",\n      \"score\": 0.9,\n      \"source_type\": \"confluence\"\n    }\n  ],\n  \"conversation_history\": []\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/agents/answer-generation/process",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "agents",
+                                "answer-generation",
+                                "process"
+                            ]
+                        },
+                        "description": "Test the answer generation agent for creating responses from sources"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔧 MCP Testing",
+            "description": "Test MCP Atlassian integration directly",
+            "item": [
+                {
+                    "name": "MCP Jira Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/mcp/jira/health",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "mcp",
+                                "jira",
+                                "health"
+                            ]
+                        },
+                        "description": "Test MCP Jira service health and connectivity"
+                    }
+                },
+                {
+                    "name": "Test Jira Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"jql\": \"project = DEMO AND status = 'In Progress'\",\n  \"max_results\": 10\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/mcp/jira/search",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "mcp",
+                                "jira",
+                                "search"
+                            ]
+                        },
+                        "description": "Test direct Jira search via MCP"
+                    }
+                },
+                {
+                    "name": "Test Confluence Search",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"siteSearch ~ \\\"project documentation\\\"\",\n  \"limit\": 10\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/mcp/confluence/search",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "mcp",
+                                "confluence",
+                                "search"
+                            ]
+                        },
+                        "description": "Test direct Confluence search via MCP"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📄 Document Management",
+            "description": "Manage documents and embeddings",
+            "item": [
+                {
+                    "name": "Upload Document",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Document file to upload"
+                                },
+                                {
+                                    "key": "metadata",
+                                    "value": "{\"title\": \"Test Document\", \"category\": \"documentation\"}",
+                                    "type": "text",
+                                    "description": "Optional metadata as JSON string"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/documents/upload",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "documents",
+                                "upload"
+                            ]
+                        },
+                        "description": "Upload a document for processing and embedding"
+                    }
+                },
+                {
+                    "name": "Get Documents",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/documents?limit=10&offset=0",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "documents"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Number of documents to retrieve"
+                                },
+                                {
+                                    "key": "offset",
+                                    "value": "0",
+                                    "description": "Offset for pagination"
+                                }
+                            ]
+                        },
+                        "description": "Retrieve a list of uploaded documents"
+                    }
+                },
+                {
+                    "name": "Search Documents",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"project requirements\",\n  \"top_k\": 5,\n  \"similarity_threshold\": 0.5\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/search",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "search"
+                            ]
+                        },
+                        "description": "Search documents using vector similarity"
+                    }
+                },
+                {
+                    "name": "Delete Document",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/documents/:documentId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "documents",
+                                ":documentId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "documentId",
+                                    "value": "doc_123",
+                                    "description": "ID of the document to delete"
+                                }
+                            ]
+                        },
+                        "description": "Delete a specific document"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔐 Authentication",
+            "description": "Authentication and user management",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secure_password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Authenticate user and get access token"
+                    }
+                },
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"secure_password\",\n  \"full_name\": \"New User\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "Register a new user account"
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/me",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "auth",
+                                "me"
+                            ]
+                        },
+                        "description": "Get current authenticated user information"
+                    }
+                },
+                {
+                    "name": "Supabase Auth - Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secure_password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/supabase-auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "supabase-auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Authenticate using Supabase authentication"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📊 Analytics & Monitoring",
+            "description": "System analytics and performance monitoring",
+            "item": [
+                {
+                    "name": "Get System Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/analytics/system",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "analytics",
+                                "system"
+                            ]
+                        },
+                        "description": "Get system-wide analytics and usage statistics"
+                    }
+                },
+                {
+                    "name": "Get Agent Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/analytics/agents",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "analytics",
+                                "agents"
+                            ]
+                        },
+                        "description": "Get analytics for individual agents performance"
+                    }
+                },
+                {
+                    "name": "Get Query Analytics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/{{apiVersion}}/analytics/queries",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "{{apiVersion}}",
+                                "analytics",
+                                "queries"
+                            ]
+                        },
+                        "description": "Get analytics for query processing patterns"
+                    }
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "exec": [
+                    "// Auto-set request timestamp",
+                    "pm.globals.set('timestamp', new Date().toISOString());"
+                ],
+                "type": "text/javascript"
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "exec": [
+                    "// Basic response validation",
+                    "pm.test('Response status code is successful', function () {",
+                    "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+                    "});",
+                    "",
+                    "// Log response time",
+                    "pm.test('Response time is acceptable', function () {",
+                    "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+                    "});",
+                    "",
+                    "// Auto-extract auth token from login responses",
+                    "if (pm.response.json() && pm.response.json().access_token) {",
+                    "    pm.collectionVariables.set('authToken', pm.response.json().access_token);",
+                    "}"
+                ],
+                "type": "text/javascript"
+            }
+        }
+    ]
+}

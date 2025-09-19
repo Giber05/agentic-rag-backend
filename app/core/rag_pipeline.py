@@ -22,6 +22,7 @@ import uuid
 from ..agents.query_rewriter import QueryRewritingAgent
 from ..agents.context_decision import ContextDecisionAgent
 from ..agents.source_retrieval import SourceRetrievalAgent
+from ..agents.enhanced_source_retrieval import EnhancedSourceRetrievalAgent
 from ..agents.answer_generation import AnswerGenerationAgent
 from ..agents.registry import AgentRegistry
 from ..agents.metrics import AgentMetrics
@@ -136,6 +137,7 @@ class RAGPipelineOrchestrator:
             "query_rewriter": self.config.get("query_rewriter", {}),
             "context_decision": self.config.get("context_decision", {}),
             "source_retrieval": self.config.get("source_retrieval", {}),
+            "enhanced_source_retrieval": self.config.get("enhanced_source_retrieval", {}),
             "answer_generation": self.config.get("answer_generation", {})
         }
         
@@ -163,6 +165,7 @@ class RAGPipelineOrchestrator:
     async def process_query(
         self,
         query: str,
+        source: str = "db",
         conversation_history: Optional[List[Dict[str, Any]]] = None,
         user_context: Optional[Dict[str, Any]] = None,
         pipeline_config: Optional[Dict[str, Any]] = None
@@ -172,6 +175,7 @@ class RAGPipelineOrchestrator:
         
         Args:
             query: User query to process
+            source: Data source for retrieval ("db", "jira", or "jira&db")
             conversation_history: Previous conversation messages
             user_context: Additional user context
             pipeline_config: Pipeline-specific configuration overrides
@@ -188,6 +192,7 @@ class RAGPipelineOrchestrator:
             query=query,
             status=PipelineStatus.PROCESSING,
             metadata={
+                "source": source,
                 "conversation_history": conversation_history or [],
                 "user_context": user_context or {},
                 "pipeline_config": pipeline_config or {}
@@ -209,26 +214,27 @@ class RAGPipelineOrchestrator:
             
             # Stage 1: Query Rewriting
             rewritten_query = await self._execute_query_rewriting(
-                query, conversation_history, result
+                query, source, conversation_history, result
             )
             
             # Stage 2: Context Decision
             context_needed = await self._execute_context_decision(
-                rewritten_query, conversation_history, result
+                rewritten_query, source, conversation_history, result
             )
             
             # Stage 3: Source Retrieval (if needed)
             sources = []
             if context_needed:
                 sources = await self._execute_source_retrieval(
-                    rewritten_query, conversation_history, result
+                    rewritten_query, source, conversation_history, result
                 )
             else:
                 logger.info(f"Context not needed for request {request_id}, skipping source retrieval")
                 result.stage_results["source_retrieval"] = {
                     "skipped": True,
                     "reason": "Context not needed",
-                    "sources": []
+                    "sources": [],
+                    "source_used": source
                 }
             # Stage 4: Answer Generation
             final_response = await self._execute_answer_generation(
@@ -263,6 +269,7 @@ class RAGPipelineOrchestrator:
     async def stream_query(
         self,
         query: str,
+        source: str = "db",
         conversation_history: Optional[List[Dict[str, Any]]] = None,
         user_context: Optional[Dict[str, Any]] = None,
         pipeline_config: Optional[Dict[str, Any]] = None
@@ -337,7 +344,7 @@ class RAGPipelineOrchestrator:
                     "timestamp": datetime.utcnow().isoformat()
                 }
                 
-                sources = await self._execute_source_retrieval_stream(rewritten_query, conversation_history)
+                sources = await self._execute_source_retrieval_stream(rewritten_query, source, conversation_history)
                 
                 yield {
                     "request_id": request_id,
@@ -402,6 +409,7 @@ class RAGPipelineOrchestrator:
     async def _execute_query_rewriting(
         self,
         query: str,
+        source: str,
         conversation_history: Optional[List[Dict[str, Any]]],
         result: PipelineResult
     ) -> str:
@@ -415,6 +423,7 @@ class RAGPipelineOrchestrator:
             # Process query
             agent_result = await agent.process({
                 "query": query,
+                "source": source,
                 "conversation_history": conversation_history or []
             })
             
@@ -441,6 +450,7 @@ class RAGPipelineOrchestrator:
     async def _execute_context_decision(
         self,
         query: str,
+        source: str,
         conversation_history: Optional[List[Dict[str, Any]]],
         result: PipelineResult
     ) -> bool:
@@ -454,13 +464,15 @@ class RAGPipelineOrchestrator:
             # Process query
             agent_result = await agent.process({
                 "query": query,
+                "source": source,
                 "conversation_history": conversation_history or []
             })
             
             if not agent_result.success:
                 raise Exception(f"Context decision failed: {agent_result.error}")
             
-            context_needed = agent_result.data.get("context_needed", True)
+            context_needed = True
+            print(f"Context needed: {context_needed}")
             
             # Store stage result
             result.stage_results["context_decision"] = {
@@ -482,6 +494,7 @@ class RAGPipelineOrchestrator:
     async def _execute_source_retrieval(
         self,
         query: str,
+        source: str,
         conversation_history: Optional[List[Dict[str, Any]]],
         result: PipelineResult
     ) -> List[Dict[str, Any]]:
@@ -489,14 +502,15 @@ class RAGPipelineOrchestrator:
         stage_start = time.time()
         
         try:
-            # Get or create source retrieval agent
-            agent = await self._get_or_create_agent("source_retrieval", SourceRetrievalAgent)
+            # Use enhanced source retrieval agent for multi-source support
+            agent = await self._get_or_create_agent("enhanced_source_retrieval", None)
             
-            # Process query
+            # Process query with source parameter
             agent_result = await agent.process({
                 "query": query,
+                "source": source,
                 "conversation_history": conversation_history or [],
-                "max_sources": 10
+                "retrieval_config": {"max_results": 10}
             })
             
             if not agent_result.success:
@@ -507,8 +521,10 @@ class RAGPipelineOrchestrator:
             # Store stage result
             result.stage_results["source_retrieval"] = {
                 "query": query,
+                "source": source,
                 "sources_count": len(sources),
                 "sources": sources,
+                "source_breakdown": agent_result.data.get("source_breakdown", {}),
                 "retrieval_strategy": agent_result.data.get("strategy_used", "unknown"),
                 "duration": time.time() - stage_start,
                 "agent_id": agent.agent_id
@@ -613,15 +629,18 @@ class RAGPipelineOrchestrator:
     async def _execute_source_retrieval_stream(
         self,
         query: str,
-        conversation_history: Optional[List[Dict[str, Any]]]
+        source: str = "db",
+        conversation_history: Optional[List[Dict[str, Any]]] = None
     ) -> List[Dict[str, Any]]:
         """Execute source retrieval for streaming pipeline."""
         try:
-            agent = await self._get_or_create_agent("source_retrieval", SourceRetrievalAgent)
+            # Use enhanced source retrieval agent for multi-source support
+            agent = await self._get_or_create_agent("enhanced_source_retrieval", None)
             agent_result = await agent.process({
                 "query": query,
+                "source": source,
                 "conversation_history": conversation_history or [],
-                "max_sources": 10
+                "retrieval_config": {"max_results": 10}
             })
             return agent_result.data.get("sources", []) if agent_result.success else []
         except Exception:
@@ -670,6 +689,14 @@ class RAGPipelineOrchestrator:
         else:
             # Create new agent
             config = self.agent_configs.get(agent_type, {})
+            
+            # Special handling for enhanced source retrieval agent
+            if agent_type == "enhanced_source_retrieval":
+                config.update({
+                    "jira_enabled": True,
+                    "jira_max_results": 5
+                })
+            
             agent = await self.agent_registry.create_agent(
                 agent_type=agent_type,
                 config=config,

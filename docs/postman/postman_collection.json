@@ -444,6 +444,215 @@
             "description": "Agent framework management and coordination"
         },
         {
+            "name": "🔗 MCP Integration (Jira)",
+            "item": [
+                {
+                    "name": "Jira Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/mcp/jira/health",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "mcp",
+                                "jira",
+                                "health"
+                            ]
+                        },
+                        "description": "Check Jira MCP service connectivity and configuration"
+                    },
+                    "response": [
+                        {
+                            "name": "Healthy Jira Connection",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{api_v1}}/mcp/jira/health",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "mcp",
+                                        "jira",
+                                        "health"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"status\": \"connected\",\n    \"jira_url\": \"https://sprout-id.atlassian.net\",\n    \"connection_verified\": true,\n    \"projects_count\": 6,\n    \"last_check\": \"2024-01-01T12:00:00Z\"\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Get Jira Projects",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/mcp/jira/projects",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "mcp",
+                                "jira",
+                                "projects"
+                            ]
+                        },
+                        "description": "Get list of available Jira projects"
+                    },
+                    "response": [
+                        {
+                            "name": "Jira Projects List",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{api_v1}}/mcp/jira/projects",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "mcp",
+                                        "jira",
+                                        "projects"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"projects\": [\n      {\n        \"key\": \"TOCO\",\n        \"name\": \"TOCO\",\n        \"id\": \"10000\"\n      },\n      {\n        \"key\": \"SPEC\",\n        \"name\": \"Spectra\",\n        \"id\": \"10001\"\n      }\n    ],\n    \"total_count\": 6\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Search Jira Issues (GET)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/mcp/jira/search?query=recent issues from TOCO project&max_results=5",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "mcp",
+                                "jira",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "query",
+                                    "value": "recent issues from TOCO project"
+                                },
+                                {
+                                    "key": "max_results",
+                                    "value": "5"
+                                }
+                            ]
+                        },
+                        "description": "Search Jira issues using natural language queries"
+                    },
+                    "response": [
+                        {
+                            "name": "Jira Search Results",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{api_v1}}/mcp/jira/search?query=recent issues from TOCO project&max_results=5",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "mcp",
+                                        "jira",
+                                        "search"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "query",
+                                            "value": "recent issues from TOCO project"
+                                        },
+                                        {
+                                            "key": "max_results",
+                                            "value": "5"
+                                        }
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"issues\": [\n      {\n        \"key\": \"TOCO-7445\",\n        \"summary\": \"Fix authentication bug in mobile app\",\n        \"description\": \"Users are experiencing login issues...\",\n        \"status\": \"In Progress\",\n        \"priority\": \"High\",\n        \"assignee\": \"john.doe@company.com\",\n        \"created\": \"2024-01-01T10:00:00Z\",\n        \"updated\": \"2024-01-01T14:30:00Z\",\n        \"url\": \"https://sprout-id.atlassian.net/browse/TOCO-7445\",\n        \"project\": {\n          \"key\": \"TOCO\",\n          \"name\": \"TOCO\"\n        }\n      }\n    ],\n    \"total_found\": 127,\n    \"jql_used\": \"project = \\\"TOCO\\\" AND text ~ \\\"recent\\\" ORDER BY created DESC\",\n    \"query_processed\": \"recent issues from TOCO project\"\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Search Jira Issues (POST)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"jql\": \"project = \\\"TOCO\\\" AND status = \\\"In Progress\\\" ORDER BY priority DESC\",\n  \"limit\": 10\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/mcp/jira/search",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "mcp",
+                                "jira",
+                                "search"
+                            ]
+                        },
+                        "description": "Advanced Jira search with custom JQL query"
+                    }
+                },
+                {
+                    "name": "Search Confluence Documentation",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{api_v1}}/mcp/jira/search?query=confluence wiki documentation&max_results=10",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "mcp",
+                                "jira",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "query",
+                                    "value": "confluence wiki documentation"
+                                },
+                                {
+                                    "key": "max_results",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Search for Jira issues that reference Confluence documentation"
+                    }
+                }
+            ],
+            "description": "Jira integration via Model Context Protocol (MCP)"
+        },
+        {
             "name": "✏️ Query Rewriter Agent",
             "item": [
                 {
@@ -887,7 +1096,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"query\": \"Explain neural networks\",\n  \"conversation_history\": [],\n  \"options\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 5\n  }\n}"
+                            "raw": "{\n  \"query\": \"Explain neural networks\",\n  \"source\": \"db\",\n  \"conversation_history\": [],\n  \"pipeline_config\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 5,\n    \"response_format\": \"markdown\"\n  }\n}"
                         },
                         "url": {
                             "raw": "{{api_v1}}/rag/process",
@@ -934,6 +1143,122 @@
                     ]
                 },
                 {
+                    "name": "Process Query with Jira Sources",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"Show me recent issues from TOCO project about authentication bugs\",\n  \"source\": \"jira\",\n  \"conversation_history\": [],\n  \"pipeline_config\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 10,\n    \"response_format\": \"markdown\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/rag/process",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Process a query using Jira sources only"
+                    },
+                    "response": [
+                        {
+                            "name": "Jira RAG Pipeline Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"Show me recent issues from TOCO project about authentication bugs\",\n  \"source\": \"jira\",\n  \"conversation_history\": [],\n  \"pipeline_config\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 10,\n    \"response_format\": \"markdown\"\n  }\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/rag/process",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "rag",
+                                        "process"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"final_response\": {\n      \"response\": {\n        \"content\": \"Based on recent Jira issues from the TOCO project, here are the authentication-related bugs [1][2]:\\n\\n## TOCO-7445: Fix authentication bug in mobile app\\n- **Status**: In Progress\\n- **Priority**: High\\n- **Description**: Users are experiencing login issues...\",\n        \"citations\": [\n          {\n            \"id\": 1,\n            \"source_id\": \"TOCO-7445\",\n            \"title\": \"TOCO-7445: Fix authentication bug in mobile app\",\n            \"relevance_score\": 0.95,\n            \"source_type\": \"jira\",\n            \"url\": \"https://sprout-id.atlassian.net/browse/TOCO-7445\"\n          }\n        ]\n      },\n      \"sources_used\": 10\n    },\n    \"optimization_info\": {\n      \"pipeline_used\": \"optimized\",\n      \"cost_savings\": 0.0581,\n      \"savings_percentage\": 94.5\n    }\n  }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Process Query with Combined Sources",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"query\": \"What are the best practices for authentication implementation?\",\n  \"source\": \"jira&db\",\n  \"conversation_history\": [],\n  \"pipeline_config\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 15,\n    \"response_format\": \"markdown\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api_v1}}/rag/process",
+                            "host": [
+                                "{{api_v1}}"
+                            ],
+                            "path": [
+                                "rag",
+                                "process"
+                            ]
+                        },
+                        "description": "Process a query using both Jira and database sources"
+                    },
+                    "response": [
+                        {
+                            "name": "Combined Sources RAG Response",
+                            "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"query\": \"What are the best practices for authentication implementation?\",\n  \"source\": \"jira&db\",\n  \"conversation_history\": [],\n  \"pipeline_config\": {\n    \"enable_streaming\": false,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 15,\n    \"response_format\": \"markdown\"\n  }\n}"
+                                },
+                                "url": {
+                                    "raw": "{{api_v1}}/rag/process",
+                                    "host": [
+                                        "{{api_v1}}"
+                                    ],
+                                    "path": [
+                                        "rag",
+                                        "process"
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "body": "{\n  \"success\": true,\n  \"data\": {\n    \"final_response\": {\n      \"response\": {\n        \"content\": \"Here are the best practices for authentication implementation based on documentation and recent project experiences [1][2][3]:\\n\\n## From Documentation:\\n- Use strong password policies [1]\\n- Implement multi-factor authentication [2]\\n\\n## From Recent Project Issues:\\n- TOCO-7445 shows common mobile authentication pitfalls [3]\",\n        \"citations\": [\n          {\n            \"id\": 1,\n            \"source_id\": \"doc_123\",\n            \"title\": \"Authentication Security Guidelines\",\n            \"source_type\": \"document\",\n            \"relevance_score\": 0.94\n          },\n          {\n            \"id\": 2,\n            \"source_id\": \"doc_456\",\n            \"title\": \"Multi-Factor Authentication Best Practices\",\n            \"source_type\": \"document\",\n            \"relevance_score\": 0.91\n          },\n          {\n            \"id\": 3,\n            \"source_id\": \"TOCO-7445\",\n            \"title\": \"TOCO-7445: Fix authentication bug in mobile app\",\n            \"source_type\": \"jira\",\n            \"relevance_score\": 0.87,\n            \"url\": \"https://sprout-id.atlassian.net/browse/TOCO-7445\"\n          }\n        ]\n      },\n      \"sources_used\": 15\n    }\n  }\n}"
+                        }
+                    ]
+                },
+                {
                     "name": "Stream Pipeline Response",
                     "request": {
                         "method": "POST",
@@ -945,7 +1270,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"query\": \"What are the applications of AI?\",\n  \"conversation_history\": [],\n  \"options\": {\n    \"enable_streaming\": true,\n    \"citation_style\": \"numbered\"\n  }\n}"
+                            "raw": "{\n  \"query\": \"Show me recent Jira issues about AI applications\",\n  \"source\": \"jira\",\n  \"conversation_history\": [],\n  \"pipeline_config\": {\n    \"enable_streaming\": true,\n    \"citation_style\": \"numbered\",\n    \"max_sources\": 10\n  }\n}"
                         },
                         "url": {
                             "raw": "{{api_v1}}/rag/stream",
@@ -999,7 +1324,7 @@
                     }
                 }
             ],
-            "description": "Complete RAG pipeline orchestration"
+            "description": "Complete RAG pipeline orchestration with multi-source support (database, Jira via MCP)"
         }
     ],
     "event": [

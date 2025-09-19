@@ -122,12 +122,13 @@ class ContextDecisionAgent(BaseAgent):
         Evaluate whether additional context retrieval is needed.
         
         Args:
-            input_data: Contains the query, conversation history, and optional parameters
+            input_data: Contains the query, conversation history, source, and optional parameters
             
         Returns:
-            Dictionary with decision, confidence, and reasoning
+            Dictionary with decision, confidence, reasoning, and source parameter
         """
         query = input_data.get("query", "").strip()
+        source = input_data.get("source", "db")  # Pass through source parameter
         conversation_history = input_data.get("conversation_history", [])
         current_context = input_data.get("current_context", {})
         
@@ -166,6 +167,7 @@ class ContextDecisionAgent(BaseAgent):
         # Prepare result
         result = {
             "query": query,
+            "source": source,  # Pass through source parameter
             "decision": decision_result["necessity"].value,
             "confidence": decision_result["confidence"],
             "reasoning": decision_result["reasoning"],
@@ -179,6 +181,7 @@ class ContextDecisionAgent(BaseAgent):
             "metadata": {
                 "processing_timestamp": datetime.utcnow().isoformat(),
                 "agent_id": self.agent_id,
+                "source_used": source,  # Log which source was requested
                 "thresholds_used": {
                     "similarity_threshold": self.similarity_threshold,
                     "confidence_threshold": self.min_confidence_threshold

@@ -1,0 +1,79 @@
+{
+    "enabled": true,
+    "debug_mode": false,
+    "environment": "development",
+    "performance": {
+        "max_operations": 5,
+        "timeout": 30.0,
+        "cost_limit": 1.0,
+        "confidence_threshold": 0.3,
+        "enable_caching": true,
+        "cache_ttl": 300,
+        "max_cache_size": 1000,
+        "max_concurrent_chains": 10,
+        "operation_timeout": 10.0,
+        "max_retries": 3,
+        "retry_delay": 1.0
+    },
+    "intelligence": {
+        "enabled_intents": [
+            "issue_analysis",
+            "documentation_search",
+            "project_overview",
+            "troubleshooting",
+            "status_check",
+            "relationship_mapping",
+            "general_search"
+        ],
+        "intent_weights": {
+            "issue_analysis": 1.2,
+            "documentation_search": 1.1,
+            "project_overview": 1.0,
+            "troubleshooting": 1.1,
+            "status_check": 1.0,
+            "relationship_mapping": 0.9,
+            "general_search": 0.8
+        },
+        "entity_patterns": {
+            "issue_keys": [
+                "[A-Z]{2,10}-\\d+"
+            ],
+            "project_names": [
+                "[A-Z]{2,10}"
+            ],
+            "usernames": [
+                "@[a-zA-Z0-9._-]+"
+            ],
+            "statuses": [
+                "(?i)(open|closed|in progress|resolved|done|to do)"
+            ]
+        },
+        "confidence_boost": {
+            "has_issue_key": 0.3,
+            "has_project": 0.2,
+            "has_username": 0.1,
+            "has_status": 0.1
+        }
+    },
+    "operations": {
+        "jira_enabled": true,
+        "confluence_enabled": true,
+        "connection_timeout": 10.0,
+        "request_timeout": 30.0,
+        "max_retries": 3,
+        "requests_per_minute": 60,
+        "burst_limit": 10
+    },
+    "templates": [],
+    "enable_streaming": true,
+    "enable_operation_preview": true,
+    "enable_statistics": true,
+    "enable_health_checks": true,
+    "require_authentication": false,
+    "allowed_origins": [
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://localhost:4200"
+    ],
+    "rate_limit_per_user": 100
+}

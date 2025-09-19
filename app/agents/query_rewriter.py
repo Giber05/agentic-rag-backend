@@ -109,12 +109,13 @@ class QueryRewritingAgent(BaseAgent):
         Process and rewrite the user query.
         
         Args:
-            input_data: Contains the query and optional parameters
+            input_data: Contains the query, source, and optional parameters
             
         Returns:
-            Dictionary with rewritten query and metadata
+            Dictionary with rewritten query, source, and metadata
         """
         query = input_data.get("query", "").strip()
+        source = input_data.get("source", "db")  # Pass through source parameter
         
         if not query:
             raise ValueError("Query cannot be empty")
@@ -146,6 +147,7 @@ class QueryRewritingAgent(BaseAgent):
         result = {
             "original_query": query,
             "rewritten_query": optimized,
+            "source": source,  # Pass through source parameter
             "preprocessing_steps": {
                 "preprocessed": preprocessed,
                 "corrected": corrected,
@@ -159,7 +161,8 @@ class QueryRewritingAgent(BaseAgent):
                 "original_length": len(query),
                 "rewritten_length": len(optimized),
                 "processing_timestamp": datetime.utcnow().isoformat(),
-                "agent_id": self.agent_id
+                "agent_id": self.agent_id,
+                "source_used": source  # Log which source was requested
             }
         }
         

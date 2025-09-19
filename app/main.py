@@ -28,6 +28,7 @@ from .api.v1.rag_pipeline import router as rag_pipeline_router
 from .api.v1.analytics import router as analytics_router
 from .api.v1.auth import router as auth_router
 from .api.v1.supabase_auth import router as supabase_auth_router
+from .api.v1.mcp_test import router as mcp_test_router
 from .models.base import ErrorResponse
 from .core.security import SECURITY_HEADERS
 from .services.rate_limiter import init_rate_limiters
@@ -191,6 +192,7 @@ app.include_router(source_retrieval_router, prefix=settings.API_V1_STR, tags=["s
 app.include_router(answer_generation_router, prefix=settings.API_V1_STR, tags=["answer-generation"])
 app.include_router(rag_pipeline_router, prefix=settings.API_V1_STR, tags=["rag-pipeline"])
 app.include_router(analytics_router, prefix=settings.API_V1_STR, tags=["analytics"])
+app.include_router(mcp_test_router, prefix=settings.API_V1_STR, tags=["mcp-testing"])
 
 
 

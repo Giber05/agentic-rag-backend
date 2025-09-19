@@ -9,6 +9,8 @@ import logging
 import json
 import asyncio
 import uuid
+from datetime import datetime
+from pydantic import BaseModel
 
 from ...core.rag_pipeline import RAGPipelineOrchestrator, PipelineResult
 from ...core.dependencies import get_agent_registry, get_agent_metrics, security_dependencies, authenticated_security_dependencies
@@ -99,6 +101,7 @@ async def process_rag_query(
             # Use full orchestrator
             result = await full_orchestrator.process_query(
                 query=request.query,
+                source=request.source,
                 conversation_history=request.conversation_history,
                 user_context=request.user_context,
                 pipeline_config=request.pipeline_config
@@ -108,10 +111,12 @@ async def process_rag_query(
             processing_result = ProcessingResult(
                 request_id=result.request_id,
                 query=request.query,
+                source=request.source,
                 status=result.status.value if hasattr(result.status, 'value') else str(result.status),
                 pipeline_type="full",
                 final_response=result.final_response or {},
                 stage_results=result.stage_results or {},
+                source_stats=result.stage_results.get("source_retrieval", {}).get("source_breakdown", {}),
                 total_duration=result.total_duration,
                 optimization_info={
                     "pipeline_used": "full",
@@ -133,6 +138,7 @@ async def process_rag_query(
         return ProcessingResult(
             request_id=request_id,
             query=request.query,
+            source=request.source,
             status="failed",
             pipeline_type="optimized" if not use_full_pipeline else "full",
             final_response={
@@ -144,6 +150,7 @@ async def process_rag_query(
                 }
             },
             stage_results={"error": error_msg},
+            source_stats={},
             total_duration=0.0,
             optimization_info={
                 "pipeline_used": "optimized" if not use_full_pipeline else "full",
@@ -177,6 +184,7 @@ async def process_rag_query_full(
         # Process the query through full pipeline
         result = await orchestrator.process_query(
             query=request.query,
+            source=request.source,
             conversation_history=request.conversation_history,
             user_context=request.user_context,
             pipeline_config=request.pipeline_config
@@ -186,10 +194,12 @@ async def process_rag_query_full(
         processing_result = ProcessingResult(
             request_id=result.request_id,
             query=request.query,
+            source=request.source,
             status=result.status.value if hasattr(result.status, 'value') else str(result.status),
             pipeline_type="full",
             final_response=result.final_response or {},
             stage_results=result.stage_results or {},
+            source_stats=result.stage_results.get("source_retrieval", {}).get("source_breakdown", {}),
             total_duration=result.total_duration,
             optimization_info={
                 "pipeline_used": "full",
@@ -208,6 +218,7 @@ async def process_rag_query_full(
         return ProcessingResult(
             request_id=request_id,
             query=request.query,
+            source=request.source,
             status="failed",
             pipeline_type="full",
             final_response={
@@ -219,6 +230,7 @@ async def process_rag_query_full(
                 }
             },
             stage_results={"error": error_msg},
+            source_stats={},
             total_duration=0.0,
             optimization_info={
                 "pipeline_used": "full",
@@ -531,3 +543,445 @@ async def pipeline_health_check(
             "error": str(e),
             "timestamp": "2024-01-01T00:00:00Z"
         } 
+
+
+# Intelligent MCP Endpoints
+
+@router.post(
+    "/intelligent/preview",
+    summary="Preview intelligent MCP operations",
+    description="Preview the operation plan for a query without executing it."
+)
+async def preview_intelligent_operations(
+    request: Dict[str, Any],
+    current_user = Depends(get_optional_user)
+) -> Dict[str, Any]:
+    """Preview intelligent MCP operation plan without execution."""
+    try:
+        query = request.get("query")
+        if not query:
+            raise HTTPException(status_code=400, detail="Missing required parameter: query")
+        
+        # Import the intelligent MCP agent
+        from ...agents.intelligent_mcp_agent import IntelligentMCPAgent
+        
+        # Create agent instance
+        agent = IntelligentMCPAgent()
+        await agent.initialize()
+        
+        # Get operation preview
+        preview = await agent.get_operation_preview(
+            query=query,
+            context=request.get("context", {})
+        )
+        
+        return {
+            "query": query,
+            "preview": preview,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to preview intelligent operations: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to preview operations: {str(e)}")
+
+
+@router.get(
+    "/intelligent/health",
+    summary="Intelligent MCP agent health check",
+    description="Check the health status of the intelligent MCP agent and its dependencies."
+)
+async def intelligent_mcp_health_check() -> Dict[str, Any]:
+    """Check intelligent MCP agent health status."""
+    try:
+        # Import the intelligent MCP agent
+        from ...agents.intelligent_mcp_agent import IntelligentMCPAgent
+        
+        # Create and check agent health
+        agent = IntelligentMCPAgent()
+        await agent.initialize()
+        
+        health_check = await agent.health_check()
+        
+        return {
+            "agent_health": health_check,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Intelligent MCP health check failed: {str(e)}")
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+
+@router.get(
+    "/intelligent/statistics",
+    summary="Get intelligent MCP agent statistics",
+    description="Get performance statistics and metrics for the intelligent MCP agent."
+)
+async def get_intelligent_mcp_statistics() -> Dict[str, Any]:
+    """Get intelligent MCP agent statistics."""
+    try:
+        # Import the intelligent MCP agent
+        from ...agents.intelligent_mcp_agent import IntelligentMCPAgent
+        
+        # Create agent instance
+        agent = IntelligentMCPAgent()
+        await agent.initialize()
+        
+        statistics = agent.get_agent_statistics()
+        
+        return {
+            "statistics": statistics,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get intelligent MCP statistics: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get statistics: {str(e)}")
+
+
+@router.post(
+    "/intelligent/configure",
+    summary="Configure intelligent MCP agent",
+    description="Update configuration settings for the intelligent MCP agent."
+)
+async def configure_intelligent_mcp(
+    config: Dict[str, Any],
+    current_user = Depends(get_current_user)  # Require auth for configuration changes
+) -> Dict[str, Any]:
+    """Configure intelligent MCP agent settings."""
+    try:
+        # Import the intelligent MCP agent
+        from ...agents.intelligent_mcp_agent import IntelligentMCPAgent
+        
+        # Create agent instance
+        agent = IntelligentMCPAgent()
+        await agent.initialize()
+        
+        # Update configuration
+        result = agent.update_config(config)
+        
+        return {
+            "message": "Intelligent MCP agent configuration updated successfully",
+            "updated_config": result,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to configure intelligent MCP agent: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to configure agent: {str(e)}")
+
+
+# ================================
+# PHASE 4: Configuration Management Endpoints
+# ================================
+
+class ConfigUpdateRequest(BaseModel):
+    """Request model for configuration updates."""
+    updates: Dict[str, Any]
+
+
+class TemplateRequest(BaseModel):
+    """Request model for operation template management."""
+    name: str
+    intent_types: List[str]
+    operations: List[Dict[str, Any]]
+    conditions: Optional[Dict[str, Any]] = {}
+    priority: int = 1
+    enabled: bool = True
+    description: str = ""
+
+
+@router.get(
+    "/config",
+    summary="Get intelligent MCP configuration",
+    description="Retrieve the current intelligent MCP configuration including all settings and templates."
+)
+async def get_intelligent_mcp_config(
+    current_user = Depends(get_optional_user)
+) -> Dict[str, Any]:
+    """Get the current intelligent MCP configuration."""
+    try:
+        from ...core.intelligent_config import get_intelligent_config
+        config = get_intelligent_config()
+        
+        return {
+            "success": True,
+            "config": config.dict(),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get intelligent MCP config: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to retrieve configuration: {str(e)}"
+        )
+
+
+@router.put(
+    "/config",
+    summary="Update intelligent MCP configuration",
+    description="Update intelligent MCP configuration settings. Requires authentication."
+)
+async def update_intelligent_mcp_config(
+    request: ConfigUpdateRequest,
+    current_user = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Update intelligent MCP configuration settings."""
+    try:
+        from ...core.intelligent_config import update_intelligent_config, get_config_manager
+        
+        # Update configuration
+        updated_config = update_intelligent_config(request.updates)
+        
+        # Save to file
+        config_manager = get_config_manager()
+        save_success = config_manager.save_config(updated_config)
+        
+        return {
+            "success": True,
+            "config": updated_config.dict(),
+            "saved_to_file": save_success,
+            "updated_fields": list(request.updates.keys()),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to update intelligent MCP config: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to update configuration: {str(e)}"
+        )
+
+
+@router.get(
+    "/config/templates",
+    summary="Get operation templates",
+    description="Retrieve all available operation templates for intelligent MCP operations."
+)
+async def get_operation_templates(
+    current_user = Depends(get_optional_user)
+) -> Dict[str, Any]:
+    """Get all operation templates."""
+    try:
+        from ...core.intelligent_config import get_config_manager
+        
+        config_manager = get_config_manager()
+        config = config_manager.get_config()
+        
+        templates = []
+        for template in config.templates:
+            templates.append(template.dict())
+        
+        return {
+            "success": True,
+            "templates": templates,
+            "total_templates": len(templates),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get operation templates: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to retrieve templates: {str(e)}"
+        )
+
+
+@router.post(
+    "/config/templates",
+    summary="Add operation template",
+    description="Add a new operation template for intelligent MCP operations. Requires authentication."
+)
+async def add_operation_template(
+    template_request: TemplateRequest,
+    current_user = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Add a new operation template."""
+    try:
+        from ...core.intelligent_config import get_config_manager, OperationTemplate
+        
+        config_manager = get_config_manager()
+        
+        # Create new template
+        new_template = OperationTemplate(
+            name=template_request.name,
+            intent_types=template_request.intent_types,
+            operations=template_request.operations,
+            conditions=template_request.conditions,
+            priority=template_request.priority,
+            enabled=template_request.enabled,
+            description=template_request.description
+        )
+        
+        # Add template
+        success = config_manager.add_template(new_template)
+        if not success:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Template '{template_request.name}' already exists"
+            )
+        
+        # Save configuration
+        save_success = config_manager.save_config()
+        
+        return {
+            "success": True,
+            "template": new_template.dict(),
+            "saved_to_file": save_success,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to add operation template: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to add template: {str(e)}"
+        )
+
+
+@router.delete(
+    "/config/templates/{template_name}",
+    summary="Remove operation template",
+    description="Remove an operation template by name. Requires authentication."
+)
+async def remove_operation_template(
+    template_name: str,
+    current_user = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Remove an operation template by name."""
+    try:
+        from ...core.intelligent_config import get_config_manager
+        
+        config_manager = get_config_manager()
+        
+        # Remove template
+        success = config_manager.remove_template(template_name)
+        if not success:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Template '{template_name}' not found"
+            )
+        
+        # Save configuration
+        save_success = config_manager.save_config()
+        
+        return {
+            "success": True,
+            "removed_template": template_name,
+            "saved_to_file": save_success,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to remove operation template: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to remove template: {str(e)}"
+        )
+
+
+@router.get(
+    "/config/performance",
+    summary="Get performance settings",
+    description="Retrieve current performance and resource configuration settings."
+)
+async def get_performance_config(
+    current_user = Depends(get_optional_user)
+) -> Dict[str, Any]:
+    """Get performance configuration settings."""
+    try:
+        from ...core.intelligent_config import get_intelligent_config
+        
+        config = get_intelligent_config()
+        
+        return {
+            "success": True,
+            "performance": config.performance.dict(),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get performance config: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to retrieve performance configuration: {str(e)}"
+        )
+
+
+@router.put(
+    "/config/performance",
+    summary="Update performance settings",
+    description="Update performance and resource configuration settings. Requires authentication."
+)
+async def update_performance_config(
+    performance_updates: Dict[str, Any],
+    current_user = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Update performance configuration settings."""
+    try:
+        from ...core.intelligent_config import update_intelligent_config
+        
+        # Wrap performance updates in the correct structure
+        updates = {"performance": performance_updates}
+        
+        # Update configuration
+        updated_config = update_intelligent_config(updates)
+        
+        return {
+            "success": True,
+            "performance": updated_config.performance.dict(),
+            "updated_fields": list(performance_updates.keys()),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to update performance config: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to update performance configuration: {str(e)}"
+        )
+
+
+@router.post(
+    "/config/reset",
+    summary="Reset configuration to defaults",
+    description="Reset intelligent MCP configuration to default values. Requires authentication."
+)
+async def reset_intelligent_mcp_config(
+    current_user = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Reset configuration to default values."""
+    try:
+        from ...core.intelligent_config import get_config_manager, IntelligentMCPConfig
+        
+        config_manager = get_config_manager()
+        
+        # Create default configuration
+        default_config = IntelligentMCPConfig()
+        
+        # Save default configuration
+        save_success = config_manager.save_config(default_config)
+        
+        return {
+            "success": True,
+            "config": default_config.dict(),
+            "saved_to_file": save_success,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to reset intelligent MCP config: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to reset configuration: {str(e)}"
+        ) 

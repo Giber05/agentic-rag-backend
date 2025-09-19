@@ -122,10 +122,12 @@ class OptimizedRAGPipelineOrchestrator:
                     result = ProcessingResult(
                         request_id=request_id,
                         query=request.query,
+                        source=request.source,
                         status="completed",
                         pipeline_type="optimized",
                         final_response=pattern_result,
                         stage_results={},
+                        source_stats={},
                         total_duration=time.time() - start_time,
                         optimization_info={
                             "pipeline_used": "pattern_match",
@@ -146,7 +148,8 @@ class OptimizedRAGPipelineOrchestrator:
                 request.conversation_history, 
                 request.user_context, 
                 request_id,
-                use_advanced_model
+                use_advanced_model,
+                request.source
             )
             
             # Finish token tracking
@@ -166,6 +169,7 @@ class OptimizedRAGPipelineOrchestrator:
             return ProcessingResult(
                 request_id=request_id,
                 query=request.query,
+                source=request.source,  # Use the source from the request
                 status="failed",
                 pipeline_type="optimized",
                 final_response={
@@ -177,6 +181,7 @@ class OptimizedRAGPipelineOrchestrator:
                     }
                 },
                 stage_results={"error": error_msg},
+                source_stats={},
                 total_duration=time.time() - start_time,
                 optimization_info={
                     "pipeline_used": "optimized",
@@ -241,7 +246,8 @@ class OptimizedRAGPipelineOrchestrator:
         conversation_history: Optional[List[Dict[str, Any]]],
         user_context: Optional[Dict[str, Any]],
         request_id: str,
-        use_advanced_model: bool
+        use_advanced_model: bool,
+        source: str = "db"
     ) -> ProcessingResult:
         """
         Process queries through the full quality pipeline with optimizations.
@@ -264,7 +270,7 @@ class OptimizedRAGPipelineOrchestrator:
             # STAGE 3: Quality Source Retrieval
             sources = []
             if context_needed:
-                sources = await self._quality_source_retrieval(rewritten_query, stage_results, request_id)
+                sources = await self._quality_source_retrieval(rewritten_query, stage_results, request_id, source)
             
             # STAGE 4: Smart Answer Generation (model selection based on complexity)
             final_response = await self._smart_answer_generation(
@@ -274,10 +280,12 @@ class OptimizedRAGPipelineOrchestrator:
             return ProcessingResult(
                 request_id=request_id,
                 query=query,
+                source=source,
                 status="completed",
                 pipeline_type="optimized",
                 final_response=final_response,
                 stage_results=stage_results,
+                source_stats={},
                 total_duration=time.time() - start_time,
                 optimization_info={
                     "pipeline_used": "quality_optimized",
@@ -291,10 +299,12 @@ class OptimizedRAGPipelineOrchestrator:
             return ProcessingResult(
                 request_id=request_id,
                 query=query,
+                source=source,
                 status="failed",
                 pipeline_type="optimized",
                 final_response=self._generate_fallback_answer(query),
                 stage_results={"error": str(e)},
+                source_stats={},
                 total_duration=time.time() - start_time,
                 optimization_info={
                     "pipeline_used": "quality_optimized",
@@ -489,22 +499,33 @@ class OptimizedRAGPipelineOrchestrator:
         
         return context_needed
     
-    async def _quality_source_retrieval(self, query: str, stage_results: Dict, request_id: str) -> List[Dict[str, Any]]:
+    async def _quality_source_retrieval(self, query: str, stage_results: Dict, request_id: str, source: str = "db") -> List[Dict[str, Any]]:
         """
-        Quality source retrieval maintaining accuracy.
+        Quality source retrieval maintaining accuracy with multi-source support and intelligent chaining.
         """
         start_time = time.time()
         
         try:
-            agent = await self._get_or_create_agent("source_retrieval", SourceRetrievalAgent)
+            # Handle intelligent MCP routing
+            if source == "intelligent":
+                return await self._process_with_intelligent_mcp(query, stage_results, request_id)
+            
+            # Use enhanced source retrieval agent for multi-source support
+            from ..agents.enhanced_source_retrieval import EnhancedSourceRetrievalAgent
+            agent = await self._get_or_create_agent("enhanced_source_retrieval", EnhancedSourceRetrievalAgent)
             
             result = await agent.process({
                 "query": query,
-                "max_sources": 8,  # Good balance between quality and cost
-                "strategy": "hybrid"  # Use best retrieval strategy
+                "source": source,
+                "retrieval_config": {"max_results": 8}  # Good balance between quality and cost
             })
             
-            sources = result.data.get("sources", []) if result.success else []
+            if result.success:
+                sources = result.data.get("sources", [])
+                source_breakdown = result.data.get("source_breakdown", {})
+            else:
+                sources = []
+                source_breakdown = {}
             
             # Track embedding tokens
             if request_id and result.success and sources:
@@ -520,22 +541,135 @@ class OptimizedRAGPipelineOrchestrator:
             
             stage_results["source_retrieval"] = {
                 "query": query,
+                "source": source,
                 "sources_count": len(sources),
-                "strategy": "quality_hybrid",
+                "source_breakdown": source_breakdown,
+                "strategy": "enhanced_multi_source",
                 "duration": time.time() - start_time
             }
             
             return sources
             
         except Exception as e:
-            logger.error(f"Quality source retrieval failed: {str(e)}")
+            logger.error(f"Enhanced source retrieval failed: {str(e)}")
             stage_results["source_retrieval"] = {
                 "error": str(e),
+                "source": source,
                 "sources_count": 0,
                 "duration": time.time() - start_time
             }
             return []
     
+    async def _process_with_intelligent_mcp(self, query: str, stage_results: Dict, request_id: str) -> List[Dict[str, Any]]:
+        """
+        Process query using the intelligent MCP agent for orchestrated chaining.
+        """
+        start_time = time.time()
+        
+        try:
+            # Import and use the intelligent MCP agent
+            from ..agents.intelligent_mcp_agent import IntelligentMCPAgent
+            agent = await self._get_or_create_agent("intelligent_mcp", IntelligentMCPAgent)
+            
+            # Process with intelligent chaining
+            result = await agent.process({
+                "query": query,
+                "context": {},
+                "config": {
+                    "max_operations": 3,  # Balanced for pipeline efficiency
+                    "timeout": 20.0,     # Reasonable timeout for pipeline context
+                    "confidence_threshold": 0.5,
+                    "enable_streaming": False  # Disable streaming in pipeline context
+                }
+            })
+            
+            if result.success:
+                chain_result = result.data
+                
+                # Extract sources from chain result
+                sources = []
+                if chain_result.get("success") and "chain_result" in chain_result:
+                    chain_data = chain_result["chain_result"]
+                    
+                    # Convert chain results to sources format
+                    for operation_result in chain_data.get("operation_results", []):
+                        if operation_result.get("success") and "data" in operation_result:
+                            operation_data = operation_result["data"]
+                            
+                            # Handle different operation types
+                            if "issues" in operation_data:
+                                # Jira search results
+                                for issue in operation_data["issues"]:
+                                    sources.append({
+                                        "content": f"{issue.get('summary', '')} - {issue.get('description', '')}",
+                                        "metadata": {
+                                            "source_type": "jira",
+                                            "issue_key": issue.get("key"),
+                                            "status": issue.get("status"),
+                                            "assignee": issue.get("assignee"),
+                                            "operation_type": operation_result.get("operation_type")
+                                        },
+                                        "relevance_score": 0.8,  # Default high relevance for intelligent results
+                                        "title": issue.get("summary", ""),
+                                        "url": f"https://your-jira-instance.atlassian.net/browse/{issue.get('key', '')}"
+                                    })
+                            
+                            elif "results" in operation_data:
+                                # Confluence search results
+                                for page in operation_data["results"]:
+                                    sources.append({
+                                        "content": page.get("content", {}).get("storage", {}).get("value", ""),
+                                        "metadata": {
+                                            "source_type": "confluence",
+                                            "page_id": page.get("id"),
+                                            "space_key": page.get("space", {}).get("key"),
+                                            "operation_type": operation_result.get("operation_type")
+                                        },
+                                        "relevance_score": 0.8,
+                                        "title": page.get("title", ""),
+                                        "url": page.get("_links", {}).get("webui", "")
+                                    })
+                
+                # Update stage results with chain metadata
+                stage_results["intelligent_mcp_chain"] = {
+                    "query": query,
+                    "operation_plan": chain_data.get("operation_plan", {}),
+                    "operations_executed": len(chain_data.get("operation_results", [])),
+                    "success_rate": self._calculate_chain_success_rate(chain_data.get("operation_results", [])),
+                    "total_sources": len(sources),
+                    "duration": time.time() - start_time,
+                    "strategy": "intelligent_orchestration"
+                }
+                
+                logger.info(f"Intelligent MCP chain processed {len(sources)} sources in {time.time() - start_time:.2f}s")
+                return sources
+                
+            else:
+                logger.warning(f"Intelligent MCP processing failed: {chain_result.get('error', 'Unknown error')}")
+                stage_results["intelligent_mcp_chain"] = {
+                    "error": chain_result.get("error", "Unknown error"),
+                    "fallback": True,
+                    "duration": time.time() - start_time
+                }
+                return []
+                
+        except Exception as e:
+            logger.error(f"Intelligent MCP processing failed: {str(e)}")
+            stage_results["intelligent_mcp_chain"] = {
+                "error": str(e),
+                "fallback": True,
+                "duration": time.time() - start_time
+            }
+            return []
+
+    def _calculate_chain_success_rate(self, operation_results: List[Dict[str, Any]]) -> float:
+        """Calculate success rate for operation chain."""
+        if not operation_results:
+            return 0.0
+        
+        successful = sum(1 for result in operation_results if result.get("success", False))
+        return successful / len(operation_results)
+
     async def _smart_answer_generation(
         self, 
         query: str, 

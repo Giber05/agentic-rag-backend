@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Agentic RAG AI Agent backend provides a sophisticated Retrieval-Augmented Generation (RAG) system featuring 5 specialized AI agents working in coordination to provide contextual, accurate responses with source attribution. The system includes advanced cost optimization with 94% cost reduction and comprehensive token tracking.
+The Agentic RAG AI Agent backend provides a sophisticated Retrieval-Augmented Generation (RAG) system featuring 5 specialized AI agents working in coordination to provide contextual, accurate responses with source attribution. The system includes advanced cost optimization with 94% cost reduction, comprehensive token tracking, and multi-source retrieval capabilities including Jira integration via Model Context Protocol (MCP).
 
 ## 🚀 Quick Start
 
@@ -27,10 +27,23 @@ curl -X POST http://localhost:8000/api/v1/rag/process \
   -H "Content-Type: application/json" \
   -d '{
     "query": "What is machine learning?",
+    "source": "db",
     "pipeline_config": {
       "citation_style": "numbered",
       "max_sources": 5,
       "enable_streaming": false
+    }
+  }'
+
+# Process query with Jira sources
+curl -X POST http://localhost:8000/api/v1/rag/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "Show me recent authentication issues from TOCO project",
+    "source": "jira",
+    "pipeline_config": {
+      "citation_style": "numbered",
+      "max_sources": 10
     }
   }'
 
@@ -403,6 +416,119 @@ Get details of a specific agent.
 
 Get performance metrics for all agents.
 
+### 🔗 MCP Integration (Jira)
+
+#### `GET /api/v1/mcp/jira/health`
+
+Check Jira MCP service connectivity and configuration.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "status": "connected",
+    "jira_url": "https://sprout-id.atlassian.net",
+    "connection_verified": true,
+    "projects_count": 6,
+    "last_check": "2024-01-01T12:00:00Z"
+  }
+}
+```
+
+#### `GET /api/v1/mcp/jira/projects`
+
+Get list of available Jira projects.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "projects": [
+      {
+        "key": "TOCO",
+        "name": "TOCO",
+        "id": "10000"
+      },
+      {
+        "key": "SPEC",
+        "name": "Spectra",
+        "id": "10001"
+      }
+    ],
+    "total_count": 6
+  }
+}
+```
+
+#### `GET /api/v1/mcp/jira/search`
+
+Search Jira issues using natural language queries.
+
+**Query Parameters:**
+
+- `query`: Natural language search query (required)
+- `max_results`: Maximum number of results to return (default: 10, max: 50)
+
+**Example Requests:**
+
+```bash
+# Search for recent issues from TOCO project
+GET /api/v1/mcp/jira/search?query=recent%20issues%20from%20TOCO%20project&max_results=5
+
+# Search for Confluence documentation
+GET /api/v1/mcp/jira/search?query=confluence%20wiki%20documentation&max_results=10
+
+# Search for specific issue
+GET /api/v1/mcp/jira/search?query=TOCO-7445&max_results=1
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "issues": [
+      {
+        "key": "TOCO-7445",
+        "summary": "Fix authentication bug in mobile app",
+        "description": "Users are experiencing login issues...",
+        "status": "In Progress",
+        "priority": "High",
+        "assignee": "john.doe@company.com",
+        "created": "2024-01-01T10:00:00Z",
+        "updated": "2024-01-01T14:30:00Z",
+        "url": "https://sprout-id.atlassian.net/browse/TOCO-7445",
+        "project": {
+          "key": "TOCO",
+          "name": "TOCO"
+        }
+      }
+    ],
+    "total_found": 127,
+    "jql_used": "project = \"TOCO\" AND text ~ \"recent\" ORDER BY created DESC",
+    "query_processed": "recent issues from TOCO project"
+  }
+}
+```
+
+#### `POST /api/v1/mcp/jira/search`
+
+Advanced Jira search with custom JQL query.
+
+**Request:**
+
+```json
+{
+  "jql": "project = \"TOCO\" AND status = \"In Progress\" ORDER BY priority DESC",
+  "limit": 10
+}
+```
+
 ### ✏️ Query Rewriter Agent
 
 #### `POST /api/v1/query-rewriter/process`
@@ -502,17 +628,18 @@ Get decision accuracy and performance metrics.
 
 Create a new Context Decision agent instance.
 
-### 📚 Source Retrieval Agent
+### 📚 Enhanced Source Retrieval Agent
 
 #### `POST /api/v1/source-retrieval/retrieve`
 
-Retrieve relevant sources for a query.
+Retrieve relevant sources for a query from multiple sources including vector database and Jira via MCP integration.
 
 **Request:**
 
 ```json
 {
   "query": "machine learning algorithms",
+  "source": "db",
   "max_results": 5,
   "strategy": "semantic",
   "filters": {
@@ -534,10 +661,25 @@ Retrieve relevant sources for a query.
         "title": "Introduction to Machine Learning",
         "content": "Machine learning is a subset of artificial intelligence...",
         "relevance_score": 0.95,
+        "source_type": "document",
         "metadata": {
           "author": "John Doe",
           "publication_date": "2023-06-15",
           "document_type": "pdf"
+        }
+      },
+      {
+        "id": "TOCO-7445",
+        "title": "TOCO-7445: Implement ML algorithms for user behavior analysis",
+        "content": "We need to implement machine learning algorithms to analyze user behavior patterns...",
+        "relevance_score": 0.89,
+        "source_type": "jira",
+        "metadata": {
+          "project": "TOCO",
+          "status": "In Progress",
+          "assignee": "jane.smith@company.com",
+          "created": "2024-01-01T10:00:00Z",
+          "url": "https://sprout-id.atlassian.net/browse/TOCO-7445"
         }
       }
     ],
@@ -623,19 +765,52 @@ Get answer quality and performance metrics.
 
 #### `POST /api/v1/rag/process` (Optimized Pipeline - Default)
 
-Process a query through the optimized RAG pipeline with 94% cost reduction.
+Process a query through the optimized RAG pipeline with 94% cost reduction and multi-source support.
 
 **Request:**
 
 ```json
 {
   "query": "Explain neural networks",
+  "source": "db",
   "conversation_history": [],
   "pipeline_config": {
     "enable_streaming": false,
     "citation_style": "numbered",
     "max_sources": 5,
     "response_format": "markdown"
+  }
+}
+```
+
+**Source Options:**
+
+- `"db"` (default): Search vector database only
+- `"jira"`: Search Jira issues only via MCP integration
+- `"jira&db"`: Search both Jira and database sources (combined)
+
+**Example Jira Query:**
+
+```json
+{
+  "query": "Show me recent issues from TOCO project about authentication bugs",
+  "source": "jira",
+  "pipeline_config": {
+    "max_sources": 10,
+    "citation_style": "numbered"
+  }
+}
+```
+
+**Example Combined Sources:**
+
+```json
+{
+  "query": "What are the best practices for authentication implementation?",
+  "source": "jira&db",
+  "pipeline_config": {
+    "max_sources": 15,
+    "citation_style": "numbered"
   }
 }
 ```
@@ -659,7 +834,17 @@ Process a query through the optimized RAG pipeline with 94% cost reduction.
             "id": 1,
             "source_id": "doc_456",
             "title": "Neural Network Fundamentals",
-            "relevance_score": 0.94
+            "relevance_score": 0.94,
+            "source_type": "document",
+            "url": "https://example.com/neural-networks"
+          },
+          {
+            "id": 2,
+            "source_id": "TOCO-7445",
+            "title": "TOCO-7445: Implement neural network authentication",
+            "relevance_score": 0.87,
+            "source_type": "jira",
+            "url": "https://sprout-id.atlassian.net/browse/TOCO-7445"
           }
         ],
         "quality": {
@@ -737,7 +922,20 @@ Process a query through the complete RAG pipeline with all agents.
 
 #### `POST /api/v1/rag/stream`
 
-Stream RAG pipeline response in real-time.
+Stream RAG pipeline response in real-time with multi-source support.
+
+**Request:**
+
+```json
+{
+  "query": "Show me recent Jira issues about authentication",
+  "source": "jira",
+  "pipeline_config": {
+    "enable_streaming": true,
+    "max_sources": 10
+  }
+}
+```
 
 #### `GET /api/v1/rag/pipeline/status`
 
